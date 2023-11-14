@@ -41,7 +41,7 @@ contract shamans_rental{
     local nftData: NFT = NFT.read(nftSymbol, id);
     //check if nft is already a part of the rental pool
     //check if the one adding the rental is the owner
-    Runtime.expect(rentals.has(id),"Nft is already in the pool of rentals.");
+    Runtime.expect(!rentals.has(id),"Nft is already in the pool of rentals.");
     Runtime.expect(Runtime.isWitness(nftData.owner),"Must own NFT to rent it out");
     local newRentalData: rentalData = Struct.rentalData(true,false,0,0,0,nftData.owner);
     rentals.set(id,newRentalData);
