@@ -106,4 +106,14 @@ contract shamans_rental{
     rentals.set(nftId,newRentalData);
     
   }
+   trigger onUpgrade(from:address)
+    {
+        Runtime.expect(Runtime.isWitness(_owner), "Only the owner can update");
+        return;
+    }
+    
+    trigger onKill(from:address){
+        Runtime.expect(Runtime.isWitness(_owner), "Only the owner can delete");
+        return;
+    }
 }

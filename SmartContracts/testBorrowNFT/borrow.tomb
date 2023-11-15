@@ -17,7 +17,7 @@
   without the actual use of NFT's , just simulation with numbers
 *************************************************************************/
 
-contract rentaltest{
+contract rentaltest01{
 
     import Map;
     import NFT;//Will use mail to send a message to the users account once their time is up
@@ -107,13 +107,39 @@ contract rentaltest{
 
   //In the case that an owner wants to deactivate his/her nft from being rented
   public DeactivateOrActivateRental(activate:bool,id: number){
+    local sval: string = activate;
+    
+    if(sval != "true" && sval != "1" && sval != "false" && sval != "0"){
+        
+        throw "Value entered is not valid: " +sval;
+
+    }
+    // no need to waste a variable if the above throws an error
+    local bval: bool;
+    if(sval == "true" || sval == "1"){
+        bval = true;
+    }
+    else{
+        bval = false;
+    }
 
     Runtime.expect(rentals.has(id),"NFT is not a part of Available Rentals");
     local oldRentalData: rentalData = rentals.get(id);
     Runtime.expect(!oldRentalData.rented,"Cannot deactivate an NFT that is being rented");
-    Runtime.expect(oldRentalData.active != activate, "active state is already: " + oldRentalData.active); //using oldRentalData.active if an error is present with this logic the user can compare what they entered vs the oldRental State
+    Runtime.expect(oldRentalData.active != bval, "active state is already: " + oldRentalData.active); //using oldRentalData.active if an error is present with this logic the user can compare what they entered vs the oldRental State
     Runtime.expect(Runtime.isWitness(oldRentalData.rentalOwner), "Must be owner of NFT to change active state");
-    local newRentalData: rentalData = Struct.rentalData(activate,oldRentalData.rented,oldRentalData.timesRented,oldRentalData.rentalStart,oldRentalData.rentalEnd,oldRentalData.rentalOwner,oldRentalData.rentalOwner); //reset rental user to owner of nft
+    local newRentalData: rentalData = Struct.rentalData(bval,oldRentalData.rented,oldRentalData.timesRented,oldRentalData.rentalStart,oldRentalData.rentalEnd,oldRentalData.rentalOwner,oldRentalData.rentalOwner); //reset rental user to owner of nft
     rentals.set(id,newRentalData);
   }
+
+   trigger onUpgrade(from:address)
+    {
+        Runtime.expect(Runtime.isWitness(_owner), "Only the owner can update");
+        return;
+    }
+    
+    trigger onKill(from:address){
+        Runtime.expect(Runtime.isWitness(_owner), "Only the owner can delete");
+        return;
+    }
 }
