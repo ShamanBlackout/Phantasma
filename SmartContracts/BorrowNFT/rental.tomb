@@ -67,25 +67,35 @@ contract shamans_rental{
     Runtime.expect(oldRentalData.active,"NFT is not available for rental");//active must be true for a user to rent
     Runtime.expect(!oldRentalData.rented,"NFT is already being rented");
     Runtime.expect(Runtime.isWitness(from),"Must be user gifting the NFT");
-    local newRentalData: rentalData = Struct.rentalData(true,oldRentalData.rented,oldRentalData.timesRented+1,0,0,to);
+    local newRentalData: rentalData = Struct.rentalData(oldRentalData.active,true,oldRentalData.timesRented+1,0,0,to);
     rentals.set(nftId,newRentalData);
     
   }
 
- 
-  public RentalEnded(){
-    //rented
+  /**********************************************************************
+   !!INCOMPLETE
+
+  Requirements: RentalEnded must be time gated. The owner of the contract
+  or one of the owner's(yet to be decided) should have this function auto-
+  matically called when the rental period has ended. 
+  ***********************************************************************/
+  public RentalEnded(nftId:number):rentalData {
+    Runtime.expect(rentals.has(id), "ID is not valid");
+    local oldRentalData: rentalData = rentals.get(id);
+    return oldRentalData;
   }
+
+
   //When owner wants to permanently remove rental from storage map, will have to add it back with stats reset to 0 if this is called
   public RemoveRental(nftSymbol:string, nftId:number){
-
-    Runtime.expect(rentals.has(nftId),"NFT is not a part of Available Rentals");
+ 
     /*********************************************************************************************
     Design Choice: Personally for optimization I want to expect a user to verify they
         are the owner of the nft before loading in the rental data.However, psychologically
         it would please the user to know once they sign then everything is okay, versus signing
         and then finding out that the nft is being rented.
     *********************************************************************************************/
+    Runtime.expect(rentals.has(nftId),"NFT is not a part of Available Rentals");
     local oldRentalData: rentalData = rentals.get(nftId);
     Runtime.expect(!oldRentalData.rented,"Cannot remove an NFT that is being rented");
     local nftData: NFT = NFT.read(nftSymbol,nftId);
@@ -96,10 +106,26 @@ contract shamans_rental{
   //In the case that an owner wants to deactivate his/her nft from being rented
   public DeactivateOrActivateRental(activate:bool,nftSymbol:string,nftId: number){
 
+    local sval: string = activate;
+
+    if(sval != "true" && sval != "1" && sval != "false" && sval != "0"){
+        
+        throw "Value entered is not valid: " +sval;
+
+    }
+    // no need to waste a variable if the above throws an error
+    local bval: bool;
+    if(sval == "true" || sval == "1"){
+        bval = true;
+    }
+    else{
+        bval = false;
+    }
+
     Runtime.expect(rentals.has(nftId),"NFT is not a part of Available Rentals");
     local oldRentalData: rentalData = rentals.get(nftId);
     Runtime.expect(!oldRentalData.rented,"Cannot deactivate an NFT that is being rented");
-    Runtime.expect(oldRentalData.active != activate, "active state is already: " + oldRentalData.active); //using oldRentalData.active if an error is present with this logic the user can compare what they entered vs the oldRental State
+    Runtime.expect(oldRentalData.active != bval, "active state is already: " + oldRentalData.active); //using oldRentalData.active if an error is present with this logic the user can compare what they entered vs the oldRental State
     local nftData: NFT = NFT.read(nftSymbol,nftId);
     Runtime.expect(Runtime.isWitness(nftData.owner), "Must be owner of NFT to change active state");
     local newRentalData: rentalData = Struct.rentalData(activate,oldRentalData.rented,oldRentalData.timesRented,oldRentalData.rentalStart,oldRentalData.rentalEnd,nftData.owner); //reset rental user to owner of nft
