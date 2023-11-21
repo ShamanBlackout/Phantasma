@@ -22,10 +22,11 @@ contract rentaltest01{
     import Map;
     import NFT;//Will use mail to send a message to the users account once their time is up
     import Mail;
+    import Oracle;
     import Runtime;
 
     global _owner: address;
-    global rentals: storage_map<number,rentalData>; 
+      global rentals: storage_map<number,rentalData>; 
     //Don't need this. Could add this to available Rentals
 
   constructor(owner:address){
@@ -108,7 +109,7 @@ contract rentaltest01{
   //In the case that an owner wants to deactivate his/her nft from being rented
   public DeactivateOrActivateRental(activate:bool,id: number){
     local sval: string = activate;
-    
+
     if(sval != "true" && sval != "1" && sval != "false" && sval != "0"){
         
         throw "Value entered is not valid: " +sval;

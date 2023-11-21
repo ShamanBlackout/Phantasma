@@ -1,0 +1,64 @@
+
+contract provingground{
+ 
+    import Runtime;
+    import Oracle;
+    import Mail;
+
+    global _owner: address;
+
+    constructor(owner:address){
+        _owner = owner;
+    }
+
+
+    /************************************************************************************************
+    Not sure how to use Oracles yet. Plan was to use Oracles to check price of given token
+    and return that token.
+    ************************************************************************************************/
+    public checkPrice(symbol: string):number{
+        local price: number = Oracle.price(symbol);
+        return price;
+    }
+
+    public sendMsg(from:address, target:address, archiveHash:hash){
+        local convToHash :hash = archiveHash;
+        Mail.pushMessage(from, target, convToHash);
+    }
+
+    public testAllTypes(str:string, truthy:bool,num:number,stamp:timestamp,bytArr:bytes,addy:address,hashish: hash): string{
+
+        local type_str ="Type of str: " +$TYPE_OF(str) + " Type of truthy: " +$TYPE_OF(truthy) +" Type of stamp: " +$TYPE_OF(stamp) +" Type of bytArr: " +$TYPE_OF(bytArr) + " Type of addy: " +$TYPE_OF(addy) +" Type of hashish: " +$TYPE_OF(hashish)+" Type of num: " +$TYPE_OF(num);
+        return type_str;
+    }
+   
+    
+    public register(from:address,domainName: string)
+    {   
+        Runtime.expect(Runtime.isWitness(from),"Invalid Witness");
+        Mail.registerDomain(from,domainName);
+
+    }
+
+    public domainExist(domainName:string): bool{
+
+        return Mail.domainExists(domainName);
+    }
+
+    public quotePrice(baseSymbol:string, quoteSymbol:string, amount:number): number {
+        local qu: number = Oracle.quote(baseSymbol,quoteSymbol,amount);
+       return qu;
+    }
+
+    trigger onUpgrade(from:address)
+    {
+        Runtime.expect(Runtime.isWitness(_owner), "Only the owner can update");
+        return;
+    }
+    
+    trigger onKill(from:address){
+        Runtime.expect(Runtime.isWitness(_owner), "Only the owner can delete");
+        return;
+    }
+
+}
