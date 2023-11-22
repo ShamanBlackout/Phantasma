@@ -1,0 +1,81 @@
+
+struct payment{
+
+
+
+
+}
+
+
+contract paymentoperator{
+ 
+    import Runtime;
+    import String;
+    import Map;
+    import Oracle;
+    import Token;
+
+    global _owner: address;
+    global acceptablePayments: storage_map<string,bool>;//symbol and bool ex: SOUL: true -> then payment is acceptable
+    //global owners: storage_map<>;
+
+    constructor(owner:address){
+        _owner = owner;
+    }
+
+
+    private addOrRemovePayment(symbol:string,choice:string){
+        Runtime.expect(Runtime.isWitness(_owner), "Unauthorized user");
+        Runtime.expect(Token.exists(symbol),"Only a Token or NFT can be added as payment");
+        if(symbol == "add"){
+            acceptablePayments.set(symbol,true);
+        }
+        if(symbol == "remove"){
+            acceptablePayments.remove(symbol);
+        }
+    }
+
+    /******************************************************************
+        !Design Choice:
+            Will create 2 different functions for user simplicity
+            Allows a user to call the smart contract without having to - 
+            input parameters that decide whether to add or remove
+    *******************************************************************/
+    public addAcceptablePayment(symbol:string ,from:address){
+        Runtime.expect(!acceptablePayments.has(symbol),"Symbol has already been added as an acceptable form of payment");
+        this.addOrRemovePayment(symbol,"add");
+
+    }
+     public removeAcceptablePayment(symbol:string ,from:address){
+        Runtime.expect(acceptablePayments.has(symbol),"Symbol has not been added as an acceptable form of payment");
+        this.addOrRemovePayment(symbol,"remove");
+
+    }
+
+    /************************************************************************************************
+    Not sure how to use Oracles yet. Plan was to use Oracles to check price of given token
+    and return that token.
+    ************************************************************************************************/
+    public checkPrice(symbol: string):number{
+        local price: number = Oracle.price(symbol);
+        return price;
+    }
+
+
+    public quotePrice(baseSymbol:string, quoteSymbol:string, amount:number): number {
+        local qu: number = Oracle.quote(baseSymbol,quoteSymbol,amount);
+       return qu;
+    }
+
+    trigger onUpgrade(from:address)
+    {
+        Runtime.expect(Runtime.isWitness(_owner), "Only the owner can update");
+        return;
+    }
+    
+    trigger onKill(from:address){
+        Runtime.expect(Runtime.isWitness(_owner), "Only the owner can delete");
+        return;
+    }
+
+}
