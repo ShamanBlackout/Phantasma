@@ -1,0 +1,46 @@
+struct placeBet{
+
+    id: number;
+    team1: string;
+    team2: string;
+    bet:number;
+    user:address; //user who placed bet
+}
+
+
+/****************************************************
+    ?User would have to transfer money to contract
+    when the bet is made.
+
+*****************************************************/
+contract bookmaker{
+    
+    import Map;
+    import Runtime;
+
+    global _owner: address;
+    global vigorish: decimal<3>;
+    global bookie: storage_map<number,placeBet>;
+
+    public constructor(owner:address){
+        _owner = owner;
+
+    }
+    //set transaction fee price
+    public setVig(fee:number){
+        Runtime.expect(Runtime.isWitness(_owner),"Unauthorized user");
+
+    }
+
+     trigger onUpgrade(from:address)
+    {
+        Runtime.expect(Runtime.isWitness(_owner), "Only the owner can update");
+        return;
+    }
+    
+    trigger onKill(from:address){
+        Runtime.expect(Runtime.isWitness(_owner), "Only the owner can delete");
+        return;
+    }
+
+}
