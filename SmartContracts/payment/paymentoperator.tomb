@@ -2,7 +2,9 @@
 struct payment{
 
 
-
+    fee: decimal<3>;
+    price: decimal<2>;
+    symbol: string;
 
 }
 
@@ -56,16 +58,7 @@ contract paymentoperator{
     Not sure how to use Oracles yet. Plan was to use Oracles to check price of given token
     and return that token.
     ************************************************************************************************/
-    public checkPrice(symbol: string):number{
-        local price: number = Oracle.price(symbol);
-        return price;
-    }
-
-
-    public quotePrice(baseSymbol:string, quoteSymbol:string, amount:number): number {
-        local qu: number = Oracle.quote(baseSymbol,quoteSymbol,amount);
-       return qu;
-    }
+   
 
     trigger onUpgrade(from:address)
     {

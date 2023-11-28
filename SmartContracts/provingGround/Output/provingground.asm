@@ -111,7 +111,8 @@ RET // 303
 // ********* testAllTypes Method ***********
 @entry_testAllTypes: // 304
 // Line 28:
-// Line 29:    public testAllTypes(str:string, truthy:bool,num:number,stamp:timestamp,bytArr:bytes,addy:address,hashish: hash): string{
+// Line 29:    //deprecated since Hash has issues
+// Line 30:    public testAllTypes(str:string, truthy:bool,num:number,stamp:timestamp,bytArr:bytes,addy:address,hashish: hash): string{
 ALIAS r1 $str // 305
 POP $str // 305
 ALIAS r2 $truthy // 307
@@ -136,8 +137,8 @@ POP $hashish // 361
 PUSH $hashish // 363
 EXTCALL "Hash()" // 365
 POP $hashish // 377
-// Line 30:
-// Line 31:        local type_str ="Type of str: " +$TYPE_OF(str) + " Type of truthy: " +$TYPE_OF(truthy) +" Type of stamp: " +$TYPE_OF(stamp) +" Type of bytArr: " +$TYPE_OF(bytArr) + " Type of addy: " +$TYPE_OF(addy) +" Type of hashish: " +$TYPE_OF(hashish)+" Type of num: " +$TYPE_OF(num);
+// Line 31:
+// Line 32:        local type_str ="Type of str: " +$TYPE_OF(str) + " Type of truthy: " +$TYPE_OF(truthy) +" Type of stamp: " +$TYPE_OF(stamp) +" Type of bytArr: " +$TYPE_OF(bytArr) + " Type of addy: " +$TYPE_OF(addy) +" Type of num: " +$TYPE_OF(num);
 	ALIAS r8 $type_str // 379
 	ALIAS r9 $literalexpression133 // 379
 	LOAD $literalexpression133 "Type of str: " // 379
@@ -170,209 +171,296 @@ POP $hashish // 377
 	CAST $literalexpression155 $literalexpression155 #String // 549
 	ADD $literalexpression153 $literalexpression155 r15 // 553
 	ALIAS r9 $literalexpression158 // 557
-	LOAD $literalexpression158 " Type of hashish: " // 557
-	ALIAS r10 $literalexpression160 // 579
-	LOAD $literalexpression160 2 Enum // 579
-	CAST $literalexpression160 $literalexpression160 #String // 587
-	ADD $literalexpression158 $literalexpression160 r16 // 591
-	ALIAS r9 $literalexpression163 // 595
-	LOAD $literalexpression163 " Type of num: " // 595
-	ALIAS r10 $literalexpression165 // 613
-	LOAD $literalexpression165 3 Enum // 613
-	CAST $literalexpression165 $literalexpression165 #String // 621
-	ADD $literalexpression163 $literalexpression165 r17 // 625
-	ADD r16 r17 r9 // 629
-	ADD r15 r9 r10 // 633
-	ADD r14 r10 r9 // 637
-	ADD r13 r9 r10 // 641
-	ADD r12 r10 r9 // 645
-	ADD r11 r9 r10 // 649
-	COPY r10 $type_str // 653
-// Line 32:        return type_str;
-	COPY $type_str r9 // 656
-	PUSH r9 // 659
-	JMP @exit_testAllTypes // 661
-@exit_testAllTypes: // 664
-RET // 665
-// Line 33:    }
+	LOAD $literalexpression158 " Type of num: " // 557
+	ALIAS r10 $literalexpression160 // 575
+	LOAD $literalexpression160 3 Enum // 575
+	CAST $literalexpression160 $literalexpression160 #String // 583
+	ADD $literalexpression158 $literalexpression160 r16 // 587
+	ADD r15 r16 r9 // 591
+	ADD r14 r9 r10 // 595
+	ADD r13 r10 r9 // 599
+	ADD r12 r9 r10 // 603
+	ADD r11 r10 r9 // 607
+	COPY r9 $type_str // 611
+// Line 33:        return type_str;
+	COPY $type_str r9 // 614
+	PUSH r9 // 617
+	JMP @exit_testAllTypes // 619
+@exit_testAllTypes: // 622
+RET // 623
+// Line 34:    }
+
+// ********* testAllTypes2 Method ***********
+@entry_testAllTypes2: // 624
+// Line 35:
+// Line 36:    public testAllTypes2(str:string, truthy:bool,num:number,stamp:timestamp,bytArr:bytes,addy:address): string{
+ALIAS r1 $str // 625
+POP $str // 625
+ALIAS r2 $truthy // 627
+POP $truthy // 627
+ALIAS r3 $num // 629
+POP $num // 629
+CAST $num $num #Number // 631
+ALIAS r4 $stamp // 635
+POP $stamp // 635
+PUSH $stamp // 637
+EXTCALL "Timestamp()" // 639
+POP $stamp // 656
+ALIAS r5 $bytArr // 658
+POP $bytArr // 658
+ALIAS r6 $addy // 660
+POP $addy // 660
+PUSH $addy // 662
+EXTCALL "Address()" // 664
+POP $addy // 679
+// Line 37:
+// Line 38:        local type_str ="Type of str: " +$TYPE_OF(str) + " Type of truthy: " +$TYPE_OF(truthy) +" Type of stamp: " +$TYPE_OF(stamp) +" Type of bytArr: " +$TYPE_OF(bytArr) + " Type of addy: " +$TYPE_OF(addy) +" Type of num: " +$TYPE_OF(num);
+	ALIAS r7 $type_str // 681
+	ALIAS r8 $literalexpression186 // 681
+	LOAD $literalexpression186 "Type of str: " // 681
+	ALIAS r9 $literalexpression188 // 698
+	LOAD $literalexpression188 4 Enum // 698
+	CAST $literalexpression188 $literalexpression188 #String // 706
+	ADD $literalexpression186 $literalexpression188 r10 // 710
+	ALIAS r8 $literalexpression191 // 714
+	LOAD $literalexpression191 " Type of truthy: " // 714
+	ALIAS r9 $literalexpression193 // 735
+	LOAD $literalexpression193 6 Enum // 735
+	CAST $literalexpression193 $literalexpression193 #String // 743
+	ADD $literalexpression191 $literalexpression193 r11 // 747
+	ALIAS r8 $literalexpression196 // 751
+	LOAD $literalexpression196 " Type of stamp: " // 751
+	ALIAS r9 $literalexpression198 // 771
+	LOAD $literalexpression198 5 Enum // 771
+	CAST $literalexpression198 $literalexpression198 #String // 779
+	ADD $literalexpression196 $literalexpression198 r12 // 783
+	ALIAS r8 $literalexpression201 // 787
+	LOAD $literalexpression201 " Type of bytArr: " // 787
+	ALIAS r9 $literalexpression203 // 808
+	LOAD $literalexpression203 2 Enum // 808
+	CAST $literalexpression203 $literalexpression203 #String // 816
+	ADD $literalexpression201 $literalexpression203 r13 // 820
+	ALIAS r8 $literalexpression206 // 824
+	LOAD $literalexpression206 " Type of addy: " // 824
+	ALIAS r9 $literalexpression208 // 843
+	LOAD $literalexpression208 8 Enum // 843
+	CAST $literalexpression208 $literalexpression208 #String // 851
+	ADD $literalexpression206 $literalexpression208 r14 // 855
+	ALIAS r8 $literalexpression211 // 859
+	LOAD $literalexpression211 " Type of num: " // 859
+	ALIAS r9 $literalexpression213 // 877
+	LOAD $literalexpression213 3 Enum // 877
+	CAST $literalexpression213 $literalexpression213 #String // 885
+	ADD $literalexpression211 $literalexpression213 r15 // 889
+	ADD r14 r15 r8 // 893
+	ADD r13 r8 r9 // 897
+	ADD r12 r9 r8 // 901
+	ADD r11 r8 r9 // 905
+	ADD r10 r9 r8 // 909
+	COPY r8 $type_str // 913
+// Line 39:        return type_str;
+	COPY $type_str r8 // 916
+	PUSH r8 // 919
+	JMP @exit_testAllTypes2 // 921
+@exit_testAllTypes2: // 924
+RET // 925
+// Line 40:    }
 
 // ********* register Method ***********
-@entry_register: // 666
-// Line 34:   
-// Line 35:    
-// Line 36:    public register(from:address,domainName: string)
-ALIAS r1 $from // 667
-POP $from // 667
-PUSH $from // 669
-EXTCALL "Address()" // 671
-POP $from // 686
-ALIAS r2 $domainName // 688
-POP $domainName // 688
-// Line 37:    {   
-// Line 38:        Runtime.expect(Runtime.isWitness(from),"Invalid Witness");
-	ALIAS r3 $methodcallexpression188 // 690
-	COPY $from r4 // 690
-	PUSH r4 // 693
-	LOAD $methodcallexpression188 "Runtime.IsWitness" // 695
-	EXTCALL $methodcallexpression188 // 716
-	POP $methodcallexpression188 // 718
-	JMPIF $methodcallexpression188 @expect_methodcallexpression185 // 720
-	ALIAS r4 $literalexpression191 // 724
-	LOAD $literalexpression191 "Invalid Witness" // 724
-	THROW $literalexpression191 // 743
-	@expect_methodcallexpression185: NOP // 746
-// Line 39:        Mail.registerDomain(from,domainName);
-	ALIAS r3 $methodcallexpression193 // 746
-	COPY $domainName r4 // 746
-	PUSH r4 // 749
-	COPY $from r4 // 751
-	PUSH r4 // 754
-	LOAD $methodcallexpression193 "RegisterDomain" // 756
-	PUSH $methodcallexpression193 // 774
-	LOAD $methodcallexpression193 "mail" // 776
-	CTX $methodcallexpression193 $methodcallexpression193 // 784
-	SWITCH $methodcallexpression193 // 787
-@exit_register: // 789
-RET // 790
-// Line 40:
-// Line 41:    }
+@entry_register: // 926
+// Line 41:   
+// Line 42:    
+// Line 43:    public register(from:address,domainName: string)
+ALIAS r1 $from // 927
+POP $from // 927
+PUSH $from // 929
+EXTCALL "Address()" // 931
+POP $from // 946
+ALIAS r2 $domainName // 948
+POP $domainName // 948
+// Line 44:    {   
+// Line 45:        Runtime.expect(Runtime.isWitness(from),"Invalid Witness");
+	ALIAS r3 $methodcallexpression235 // 950
+	COPY $from r4 // 950
+	PUSH r4 // 953
+	LOAD $methodcallexpression235 "Runtime.IsWitness" // 955
+	EXTCALL $methodcallexpression235 // 976
+	POP $methodcallexpression235 // 978
+	JMPIF $methodcallexpression235 @expect_methodcallexpression232 // 980
+	ALIAS r4 $literalexpression238 // 984
+	LOAD $literalexpression238 "Invalid Witness" // 984
+	THROW $literalexpression238 // 1003
+	@expect_methodcallexpression232: NOP // 1006
+// Line 46:        Mail.registerDomain(from,domainName);
+	ALIAS r3 $methodcallexpression240 // 1006
+	COPY $domainName r4 // 1006
+	PUSH r4 // 1009
+	COPY $from r4 // 1011
+	PUSH r4 // 1014
+	LOAD $methodcallexpression240 "RegisterDomain" // 1016
+	PUSH $methodcallexpression240 // 1034
+	LOAD $methodcallexpression240 "mail" // 1036
+	CTX $methodcallexpression240 $methodcallexpression240 // 1044
+	SWITCH $methodcallexpression240 // 1047
+@exit_register: // 1049
+RET // 1050
+// Line 47:
+// Line 48:    }
+
+// ********* testBool Method ***********
+@entry_testBool: // 1051
+// Line 49:
+// Line 50:    public testBool(bRole:bool):type{
+ALIAS r1 $bRole // 1052
+POP $bRole // 1052
+// Line 51:    
+// Line 52:
+// Line 53:        return $TYPE_OF(bRole);
+	ALIAS r2 $literalexpression250 // 1054
+	LOAD $literalexpression250 6 Enum // 1054
+	PUSH $literalexpression250 // 1062
+	JMP @exit_testBool // 1064
+@exit_testBool: // 1067
+RET // 1068
+// Line 54:        
+// Line 55:    }
 
 // ********* domainExist Method ***********
-@entry_domainExist: // 791
-// Line 42:
-// Line 43:    public domainExist(domainName:string): bool{
-ALIAS r1 $domainName // 792
-POP $domainName // 792
-// Line 44:
-// Line 45:        return Mail.domainExists(domainName);
-	ALIAS r2 $methodcallexpression202 // 794
-	COPY $domainName r3 // 794
-	PUSH r3 // 797
-	LOAD $methodcallexpression202 "DomainExists" // 799
-	PUSH $methodcallexpression202 // 815
-	LOAD $methodcallexpression202 "mail" // 817
-	CTX $methodcallexpression202 $methodcallexpression202 // 825
-	SWITCH $methodcallexpression202 // 828
-	POP $methodcallexpression202 // 830
-	PUSH $methodcallexpression202 // 832
-	JMP @exit_domainExist // 834
-@exit_domainExist: // 837
-RET // 838
-// Line 46:    }
+@entry_domainExist: // 1069
+// Line 56:
+// Line 57:    public domainExist(domainName:string): bool{
+ALIAS r1 $domainName // 1070
+POP $domainName // 1070
+// Line 58:
+// Line 59:        return Mail.domainExists(domainName);
+	ALIAS r2 $methodcallexpression256 // 1072
+	COPY $domainName r3 // 1072
+	PUSH r3 // 1075
+	LOAD $methodcallexpression256 "DomainExists" // 1077
+	PUSH $methodcallexpression256 // 1093
+	LOAD $methodcallexpression256 "mail" // 1095
+	CTX $methodcallexpression256 $methodcallexpression256 // 1103
+	SWITCH $methodcallexpression256 // 1106
+	POP $methodcallexpression256 // 1108
+	PUSH $methodcallexpression256 // 1110
+	JMP @exit_domainExist // 1112
+@exit_domainExist: // 1115
+RET // 1116
+// Line 60:    }
 
 // ********* quotePrice Method ***********
-@entry_quotePrice: // 839
-// Line 47:
-// Line 48:    public quotePrice(baseSymbol:string, quoteSymbol:string, amount:number): number {
-ALIAS r1 $baseSymbol // 840
-POP $baseSymbol // 840
-ALIAS r2 $quoteSymbol // 842
-POP $quoteSymbol // 842
-ALIAS r3 $amount // 844
-POP $amount // 844
-CAST $amount $amount #Number // 846
-// Line 49:        local qu: number = Oracle.quote(baseSymbol,quoteSymbol,amount);
-	ALIAS r4 $qu // 850
-	ALIAS r5 $methodcallexpression214 // 850
-	COPY $amount r6 // 850
-	PUSH r6 // 853
-	COPY $quoteSymbol r6 // 855
-	PUSH r6 // 858
-	COPY $baseSymbol r6 // 860
-	PUSH r6 // 863
-	LOAD $methodcallexpression214 "Oracle.Quote" // 865
-	EXTCALL $methodcallexpression214 // 881
-	COPY $methodcallexpression214 $qu // 883
-// Line 50:       return qu;
-	COPY $qu r5 // 886
-	PUSH r5 // 889
-	JMP @exit_quotePrice // 891
-@exit_quotePrice: // 894
-RET // 895
-// Line 51:    }
+@entry_quotePrice: // 1117
+// Line 61:
+// Line 62:    public quotePrice(baseSymbol:string, quoteSymbol:string, amount:number): number {
+ALIAS r1 $baseSymbol // 1118
+POP $baseSymbol // 1118
+ALIAS r2 $quoteSymbol // 1120
+POP $quoteSymbol // 1120
+ALIAS r3 $amount // 1122
+POP $amount // 1122
+CAST $amount $amount #Number // 1124
+// Line 63:        local qu: number = Oracle.quote(baseSymbol,quoteSymbol,amount);
+	ALIAS r4 $qu // 1128
+	ALIAS r5 $methodcallexpression268 // 1128
+	COPY $amount r6 // 1128
+	PUSH r6 // 1131
+	COPY $quoteSymbol r6 // 1133
+	PUSH r6 // 1136
+	COPY $baseSymbol r6 // 1138
+	PUSH r6 // 1141
+	LOAD $methodcallexpression268 "Oracle.Quote" // 1143
+	EXTCALL $methodcallexpression268 // 1159
+	COPY $methodcallexpression268 $qu // 1161
+// Line 64:       return qu;
+	COPY $qu r5 // 1164
+	PUSH r5 // 1167
+	JMP @exit_quotePrice // 1169
+@exit_quotePrice: // 1172
+RET // 1173
+// Line 65:    }
 
 // ********* onUpgrade Trigger ***********
-@entry_onUpgrade: // 896
-ALIAS r1 $dataGet // 897
-LOAD $dataGet "Data.Get" // 897
-ALIAS r2 $contractName // 909
-LOAD $contractName "provingground" // 909
-ALIAS r3 $_owner // 926
+@entry_onUpgrade: // 1174
+ALIAS r1 $dataGet // 1175
+LOAD $dataGet "Data.Get" // 1175
+ALIAS r2 $contractName // 1187
+LOAD $contractName "provingground" // 1187
+ALIAS r3 $_owner // 1204
 // reading global: _owner
-LOAD r0 8 // 926
-PUSH r0 // 931
-LOAD r0 "_owner" // 933
-PUSH r0 // 943
-PUSH $contractName // 945
-EXTCALL $dataGet // 947
-POP $_owner // 949
-PUSH $_owner // 951
-EXTCALL "Address()" // 953
-POP $_owner // 968
-// Line 52:
-// Line 53:    trigger onUpgrade(from:address)
-ALIAS r1 $from // 970
-POP $from // 970
-PUSH $from // 972
-EXTCALL "Address()" // 974
-POP $from // 989
-// Line 54:    {
-// Line 55:        Runtime.expect(Runtime.isWitness(_owner), "Only the owner can update");
-	ALIAS r2 $methodcallexpression233 // 991
-	COPY $_owner r4 // 991
-	PUSH r4 // 994
-	LOAD $methodcallexpression233 "Runtime.IsWitness" // 996
-	EXTCALL $methodcallexpression233 // 1017
-	POP $methodcallexpression233 // 1019
-	JMPIF $methodcallexpression233 @expect_methodcallexpression230 // 1021
-	ALIAS r4 $literalexpression236 // 1025
-	LOAD $literalexpression236 "Only the owner can update" // 1025
-	THROW $literalexpression236 // 1054
-	@expect_methodcallexpression230: NOP // 1057
-// Line 56:        return;
-	JMP @exit_onUpgrade // 1057
-@exit_onUpgrade: // 1060
-RET // 1061
-// Line 57:    }
+LOAD r0 8 // 1204
+PUSH r0 // 1209
+LOAD r0 "_owner" // 1211
+PUSH r0 // 1221
+PUSH $contractName // 1223
+EXTCALL $dataGet // 1225
+POP $_owner // 1227
+PUSH $_owner // 1229
+EXTCALL "Address()" // 1231
+POP $_owner // 1246
+// Line 66:
+// Line 67:    trigger onUpgrade(from:address)
+ALIAS r1 $from // 1248
+POP $from // 1248
+PUSH $from // 1250
+EXTCALL "Address()" // 1252
+POP $from // 1267
+// Line 68:    {
+// Line 69:        Runtime.expect(Runtime.isWitness(_owner), "Only the owner can update");
+	ALIAS r2 $methodcallexpression287 // 1269
+	COPY $_owner r4 // 1269
+	PUSH r4 // 1272
+	LOAD $methodcallexpression287 "Runtime.IsWitness" // 1274
+	EXTCALL $methodcallexpression287 // 1295
+	POP $methodcallexpression287 // 1297
+	JMPIF $methodcallexpression287 @expect_methodcallexpression284 // 1299
+	ALIAS r4 $literalexpression290 // 1303
+	LOAD $literalexpression290 "Only the owner can update" // 1303
+	THROW $literalexpression290 // 1332
+	@expect_methodcallexpression284: NOP // 1335
+// Line 70:        return;
+	JMP @exit_onUpgrade // 1335
+@exit_onUpgrade: // 1338
+RET // 1339
+// Line 71:    }
 
 // ********* onKill Trigger ***********
-@entry_onKill: // 1062
-ALIAS r1 $dataGet // 1063
-LOAD $dataGet "Data.Get" // 1063
-ALIAS r2 $contractName // 1075
-LOAD $contractName "provingground" // 1075
-ALIAS r3 $_owner // 1092
+@entry_onKill: // 1340
+ALIAS r1 $dataGet // 1341
+LOAD $dataGet "Data.Get" // 1341
+ALIAS r2 $contractName // 1353
+LOAD $contractName "provingground" // 1353
+ALIAS r3 $_owner // 1370
 // reading global: _owner
-LOAD r0 8 // 1092
-PUSH r0 // 1097
-LOAD r0 "_owner" // 1099
-PUSH r0 // 1109
-PUSH $contractName // 1111
-EXTCALL $dataGet // 1113
-POP $_owner // 1115
-PUSH $_owner // 1117
-EXTCALL "Address()" // 1119
-POP $_owner // 1134
-// Line 58:    
-// Line 59:    trigger onKill(from:address){
-ALIAS r1 $from // 1136
-POP $from // 1136
-PUSH $from // 1138
-EXTCALL "Address()" // 1140
-POP $from // 1155
-// Line 60:        Runtime.expect(Runtime.isWitness(_owner), "Only the owner can delete");
-	ALIAS r2 $methodcallexpression246 // 1157
-	COPY $_owner r4 // 1157
-	PUSH r4 // 1160
-	LOAD $methodcallexpression246 "Runtime.IsWitness" // 1162
-	EXTCALL $methodcallexpression246 // 1183
-	POP $methodcallexpression246 // 1185
-	JMPIF $methodcallexpression246 @expect_methodcallexpression243 // 1187
-	ALIAS r4 $literalexpression249 // 1191
-	LOAD $literalexpression249 "Only the owner can delete" // 1191
-	THROW $literalexpression249 // 1220
-	@expect_methodcallexpression243: NOP // 1223
-// Line 61:        return;
-	JMP @exit_onKill // 1223
-@exit_onKill: // 1226
-RET // 1227
+LOAD r0 8 // 1370
+PUSH r0 // 1375
+LOAD r0 "_owner" // 1377
+PUSH r0 // 1387
+PUSH $contractName // 1389
+EXTCALL $dataGet // 1391
+POP $_owner // 1393
+PUSH $_owner // 1395
+EXTCALL "Address()" // 1397
+POP $_owner // 1412
+// Line 72:    
+// Line 73:    trigger onKill(from:address){
+ALIAS r1 $from // 1414
+POP $from // 1414
+PUSH $from // 1416
+EXTCALL "Address()" // 1418
+POP $from // 1433
+// Line 74:        Runtime.expect(Runtime.isWitness(_owner), "Only the owner can delete");
+	ALIAS r2 $methodcallexpression300 // 1435
+	COPY $_owner r4 // 1435
+	PUSH r4 // 1438
+	LOAD $methodcallexpression300 "Runtime.IsWitness" // 1440
+	EXTCALL $methodcallexpression300 // 1461
+	POP $methodcallexpression300 // 1463
+	JMPIF $methodcallexpression300 @expect_methodcallexpression297 // 1465
+	ALIAS r4 $literalexpression303 // 1469
+	LOAD $literalexpression303 "Only the owner can delete" // 1469
+	THROW $literalexpression303 // 1498
+	@expect_methodcallexpression297: NOP // 1501
+// Line 75:        return;
+	JMP @exit_onKill // 1501
+@exit_onKill: // 1504
+RET // 1505

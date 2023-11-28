@@ -26,9 +26,16 @@ contract provingground{
         Mail.pushMessage(from, target, convToHash);
     }
 
+    //deprecated since Hash has issues
     public testAllTypes(str:string, truthy:bool,num:number,stamp:timestamp,bytArr:bytes,addy:address,hashish: hash): string{
 
-        local type_str ="Type of str: " +$TYPE_OF(str) + " Type of truthy: " +$TYPE_OF(truthy) +" Type of stamp: " +$TYPE_OF(stamp) +" Type of bytArr: " +$TYPE_OF(bytArr) + " Type of addy: " +$TYPE_OF(addy) +" Type of hashish: " +$TYPE_OF(hashish)+" Type of num: " +$TYPE_OF(num);
+        local type_str ="Type of str: " +$TYPE_OF(str) + " Type of truthy: " +$TYPE_OF(truthy) +" Type of stamp: " +$TYPE_OF(stamp) +" Type of bytArr: " +$TYPE_OF(bytArr) + " Type of addy: " +$TYPE_OF(addy) +" Type of num: " +$TYPE_OF(num);
+        return type_str;
+    }
+
+    public testAllTypes2(str:string, truthy:bool,num:number,stamp:timestamp,bytArr:bytes,addy:address): string{
+
+        local type_str ="Type of str: " +$TYPE_OF(str) + " Type of truthy: " +$TYPE_OF(truthy) +" Type of stamp: " +$TYPE_OF(stamp) +" Type of bytArr: " +$TYPE_OF(bytArr) + " Type of addy: " +$TYPE_OF(addy) +" Type of num: " +$TYPE_OF(num);
         return type_str;
     }
    
@@ -38,6 +45,13 @@ contract provingground{
         Runtime.expect(Runtime.isWitness(from),"Invalid Witness");
         Mail.registerDomain(from,domainName);
 
+    }
+
+    public testBool(bRole:bool):type{
+    
+
+        return $TYPE_OF(bRole);
+        
     }
 
     public domainExist(domainName:string): bool{
