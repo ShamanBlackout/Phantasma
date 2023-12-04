@@ -1,0 +1,42 @@
+contract simplecon00 {
+
+    import Runtime;
+    global _owner: address;
+
+
+    constructor(owner:address){
+        _owner = owner;
+    }
+
+    public pow(a:number,b:number):number{
+
+        if(b < 0){
+            throw "We are not computing negatives at the moment. Check back later";
+        }
+        if(b == 0){
+            return 1;
+        }
+        if(b == 1){
+            return a;
+        }
+        
+        local tmp:number=a;
+
+        for(local x:number=1; x<b; x++){
+            tmp = tmp*a;
+        }
+         return tmp;
+    }
+
+
+    trigger onUpgrade(from:address){
+        Runtime.expect(Runtime.isWitness(_owner),"Improper verification");
+
+    }
+
+    trigger onKill(from:address){
+         Runtime.expect(Runtime.isWitness(_owner),"Improper verification");
+
+    }
+
+}

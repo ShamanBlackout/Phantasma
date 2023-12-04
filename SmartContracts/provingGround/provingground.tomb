@@ -39,7 +39,22 @@ contract provingground{
         return type_str;
     }
    
-    
+   /*****************************************************
+    Not yet finished
+   ******************************************************/
+    public decimalTest(digits:number){
+        //local val: decimal<digits>; appears that it is no possible to dynamically assign a decimal digit
+
+    }
+    /********************************************
+    Log messages are shown under vm.txt within 
+    docker
+    *********************************************/
+    public logTest(message:string){
+        Runtime.log(message);
+    }
+
+
     public register(from:address,domainName: string)
     {   
         Runtime.expect(Runtime.isWitness(from),"Invalid Witness");

@@ -1,0 +1,86 @@
+struct simp_ram {
+  
+   
+}
+
+struct simp_rom {
+    name: string;
+    description: string;
+    infoURL: string;
+    imageURL: string;
+}
+
+token SNFT {
+
+    import Runtime;
+    import NFT;
+
+
+    global _owner:address;
+
+    property name: string = "Simple NFT";
+    property symbol: string = "SNFT";
+    property isFungible: bool = false;
+    property isFinite: bool = true;
+    property isBurnable: bool = true;
+    property maxSupply: number =  10; //0 for an infinite
+    property isTransferable: bool = true;
+    property owner: address = _owner;
+
+
+ 
+
+    nft simp<simp_rom,simp_ram>{
+
+        property name: string{
+            return _ROM.name;
+        }
+        property description: string{
+            return _ROM.description;
+        }
+        property infoURL: string{
+            return _ROM.infoURL;
+        }
+        property imageURL: string{
+            return _ROM.imageURL;
+        }
+      
+  
+    }
+
+   constructor(owner:address){
+        _owner = owner;
+        NFT.createSeries(owner,$THIS_SYMBOL,0,4,TokenSeries.Duplicated,simp);//TokenSeries.Unique
+    }
+
+    public initMint(from:address,to:address,seriesID:number){
+        local rom: simp_rom = Struct.simp_rom("The Manatee Gazer","One who gazes at the manatee becomes one with nature itself","","https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/8cfe7a95-07b5-45de-a26a-e310da6553f5/dgeuci3-0c0cc951-34c1-4573-9d15-6164367c32a4.jpg/v1/fill/w_1192,h_670,q_70,strp/the_dream_tour_is_over_by_kismuki_dgeuci3-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NzIwIiwicGF0aCI6IlwvZlwvOGNmZTdhOTUtMDdiNS00NWRlLWEyNmEtZTMxMGRhNjU1M2Y1XC9kZ2V1Y2kzLTBjMGNjOTUxLTM0YzEtNDU3My05ZDE1LTYxNjQzNjdjMzJhNC5qcGciLCJ3aWR0aCI6Ijw9MTI4MCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19.QBvjj3MI9P-BytZiy3Hr_2QC3eIydWgyDOo9IdkG39Y");
+        NFT.mint(from, to, $THIS_SYMBOL, rom, "", seriesID);
+    }
+
+    public dupMint(from:address,to:address,seriesID:number){ 
+        NFT.mint(from, to, $THIS_SYMBOL, "", "", seriesID);
+    }
+
+
+    trigger onUpgrade(from:address){
+        Runtime.expect(Runtime.isWitness(_owner),"Improper verification");
+
+    }
+
+    trigger onKill(from:address){
+         Runtime.expect(Runtime.isWitness(_owner),"Improper verification");
+
+    }
+    trigger onMint(from:address, to:address, symbol:string, tokenID:number) {
+        Runtime.expect(Runtime.isWitness(from),"Improper verification");
+
+    }
+
+    trigger onSeries(from:address){
+
+    }
+    trigger onBurn(from:address, to:address, symbol:string, tokenID:number){
+         Runtime.expect(Runtime.isWitness(from),"Improper verification");
+    }
+}

@@ -266,201 +266,232 @@ POP $addy // 679
 RET // 925
 // Line 40:    }
 
-// ********* register Method ***********
-@entry_register: // 926
+// ********* decimalTest Method ***********
+@entry_decimalTest: // 926
 // Line 41:   
-// Line 42:    
-// Line 43:    public register(from:address,domainName: string)
-ALIAS r1 $from // 927
-POP $from // 927
-PUSH $from // 929
-EXTCALL "Address()" // 931
-POP $from // 946
-ALIAS r2 $domainName // 948
-POP $domainName // 948
-// Line 44:    {   
-// Line 45:        Runtime.expect(Runtime.isWitness(from),"Invalid Witness");
-	ALIAS r3 $methodcallexpression235 // 950
-	COPY $from r4 // 950
-	PUSH r4 // 953
-	LOAD $methodcallexpression235 "Runtime.IsWitness" // 955
-	EXTCALL $methodcallexpression235 // 976
-	POP $methodcallexpression235 // 978
-	JMPIF $methodcallexpression235 @expect_methodcallexpression232 // 980
-	ALIAS r4 $literalexpression238 // 984
-	LOAD $literalexpression238 "Invalid Witness" // 984
-	THROW $literalexpression238 // 1003
-	@expect_methodcallexpression232: NOP // 1006
-// Line 46:        Mail.registerDomain(from,domainName);
-	ALIAS r3 $methodcallexpression240 // 1006
-	COPY $domainName r4 // 1006
-	PUSH r4 // 1009
-	COPY $from r4 // 1011
-	PUSH r4 // 1014
-	LOAD $methodcallexpression240 "RegisterDomain" // 1016
-	PUSH $methodcallexpression240 // 1034
-	LOAD $methodcallexpression240 "mail" // 1036
-	CTX $methodcallexpression240 $methodcallexpression240 // 1044
-	SWITCH $methodcallexpression240 // 1047
-@exit_register: // 1049
-RET // 1050
+// Line 42:   /*****************************************************
+// Line 43:    Not yet finished
+// Line 44:   ******************************************************/
+// Line 45:    public decimalTest(digits:number){
+ALIAS r1 $digits // 927
+POP $digits // 927
+CAST $digits $digits #Number // 929
+@exit_decimalTest: // 933
+RET // 934
+// Line 46:        //local val: decimal<digits>; appears that it is no possible to dynamically assign a decimal digit
 // Line 47:
 // Line 48:    }
 
-// ********* testBool Method ***********
-@entry_testBool: // 1051
-// Line 49:
-// Line 50:    public testBool(bRole:bool):type{
-ALIAS r1 $bRole // 1052
-POP $bRole // 1052
-// Line 51:    
+// ********* logTest Method ***********
+@entry_logTest: // 935
+// Line 49:    public logTest(message:string){
+ALIAS r1 $message // 936
+POP $message // 936
+// Line 50:        Runtime.log(message);
+	ALIAS r2 $methodcallexpression234 // 938
+	COPY $message r3 // 938
+	PUSH r3 // 941
+	LOAD $methodcallexpression234 "Runtime.Log" // 943
+	EXTCALL $methodcallexpression234 // 958
+@exit_logTest: // 960
+RET // 961
+// Line 51:    }
+
+// ********* register Method ***********
+@entry_register: // 962
 // Line 52:
-// Line 53:        return $TYPE_OF(bRole);
-	ALIAS r2 $literalexpression250 // 1054
-	LOAD $literalexpression250 6 Enum // 1054
-	PUSH $literalexpression250 // 1062
-	JMP @exit_testBool // 1064
-@exit_testBool: // 1067
-RET // 1068
-// Line 54:        
-// Line 55:    }
+// Line 53:
+// Line 54:    public register(from:address,domainName: string)
+ALIAS r1 $from // 963
+POP $from // 963
+PUSH $from // 965
+EXTCALL "Address()" // 967
+POP $from // 982
+ALIAS r2 $domainName // 984
+POP $domainName // 984
+// Line 55:    {   
+// Line 56:        Runtime.expect(Runtime.isWitness(from),"Invalid Witness");
+	ALIAS r3 $methodcallexpression247 // 986
+	COPY $from r4 // 986
+	PUSH r4 // 989
+	LOAD $methodcallexpression247 "Runtime.IsWitness" // 991
+	EXTCALL $methodcallexpression247 // 1012
+	POP $methodcallexpression247 // 1014
+	JMPIF $methodcallexpression247 @expect_methodcallexpression244 // 1016
+	ALIAS r4 $literalexpression250 // 1020
+	LOAD $literalexpression250 "Invalid Witness" // 1020
+	THROW $literalexpression250 // 1039
+	@expect_methodcallexpression244: NOP // 1042
+// Line 57:        Mail.registerDomain(from,domainName);
+	ALIAS r3 $methodcallexpression252 // 1042
+	COPY $domainName r4 // 1042
+	PUSH r4 // 1045
+	COPY $from r4 // 1047
+	PUSH r4 // 1050
+	LOAD $methodcallexpression252 "RegisterDomain" // 1052
+	PUSH $methodcallexpression252 // 1070
+	LOAD $methodcallexpression252 "mail" // 1072
+	CTX $methodcallexpression252 $methodcallexpression252 // 1080
+	SWITCH $methodcallexpression252 // 1083
+@exit_register: // 1085
+RET // 1086
+// Line 58:
+// Line 59:    }
+
+// ********* testBool Method ***********
+@entry_testBool: // 1087
+// Line 60:
+// Line 61:    public testBool(bRole:bool):type{
+ALIAS r1 $bRole // 1088
+POP $bRole // 1088
+// Line 62:    
+// Line 63:
+// Line 64:        return $TYPE_OF(bRole);
+	ALIAS r2 $literalexpression262 // 1090
+	LOAD $literalexpression262 6 Enum // 1090
+	PUSH $literalexpression262 // 1098
+	JMP @exit_testBool // 1100
+@exit_testBool: // 1103
+RET // 1104
+// Line 65:        
+// Line 66:    }
 
 // ********* domainExist Method ***********
-@entry_domainExist: // 1069
-// Line 56:
-// Line 57:    public domainExist(domainName:string): bool{
-ALIAS r1 $domainName // 1070
-POP $domainName // 1070
-// Line 58:
-// Line 59:        return Mail.domainExists(domainName);
-	ALIAS r2 $methodcallexpression256 // 1072
-	COPY $domainName r3 // 1072
-	PUSH r3 // 1075
-	LOAD $methodcallexpression256 "DomainExists" // 1077
-	PUSH $methodcallexpression256 // 1093
-	LOAD $methodcallexpression256 "mail" // 1095
-	CTX $methodcallexpression256 $methodcallexpression256 // 1103
-	SWITCH $methodcallexpression256 // 1106
-	POP $methodcallexpression256 // 1108
-	PUSH $methodcallexpression256 // 1110
-	JMP @exit_domainExist // 1112
-@exit_domainExist: // 1115
-RET // 1116
-// Line 60:    }
-
-// ********* quotePrice Method ***********
-@entry_quotePrice: // 1117
-// Line 61:
-// Line 62:    public quotePrice(baseSymbol:string, quoteSymbol:string, amount:number): number {
-ALIAS r1 $baseSymbol // 1118
-POP $baseSymbol // 1118
-ALIAS r2 $quoteSymbol // 1120
-POP $quoteSymbol // 1120
-ALIAS r3 $amount // 1122
-POP $amount // 1122
-CAST $amount $amount #Number // 1124
-// Line 63:        local qu: number = Oracle.quote(baseSymbol,quoteSymbol,amount);
-	ALIAS r4 $qu // 1128
-	ALIAS r5 $methodcallexpression268 // 1128
-	COPY $amount r6 // 1128
-	PUSH r6 // 1131
-	COPY $quoteSymbol r6 // 1133
-	PUSH r6 // 1136
-	COPY $baseSymbol r6 // 1138
-	PUSH r6 // 1141
-	LOAD $methodcallexpression268 "Oracle.Quote" // 1143
-	EXTCALL $methodcallexpression268 // 1159
-	COPY $methodcallexpression268 $qu // 1161
-// Line 64:       return qu;
-	COPY $qu r5 // 1164
-	PUSH r5 // 1167
-	JMP @exit_quotePrice // 1169
-@exit_quotePrice: // 1172
-RET // 1173
-// Line 65:    }
-
-// ********* onUpgrade Trigger ***********
-@entry_onUpgrade: // 1174
-ALIAS r1 $dataGet // 1175
-LOAD $dataGet "Data.Get" // 1175
-ALIAS r2 $contractName // 1187
-LOAD $contractName "provingground" // 1187
-ALIAS r3 $_owner // 1204
-// reading global: _owner
-LOAD r0 8 // 1204
-PUSH r0 // 1209
-LOAD r0 "_owner" // 1211
-PUSH r0 // 1221
-PUSH $contractName // 1223
-EXTCALL $dataGet // 1225
-POP $_owner // 1227
-PUSH $_owner // 1229
-EXTCALL "Address()" // 1231
-POP $_owner // 1246
-// Line 66:
-// Line 67:    trigger onUpgrade(from:address)
-ALIAS r1 $from // 1248
-POP $from // 1248
-PUSH $from // 1250
-EXTCALL "Address()" // 1252
-POP $from // 1267
-// Line 68:    {
-// Line 69:        Runtime.expect(Runtime.isWitness(_owner), "Only the owner can update");
-	ALIAS r2 $methodcallexpression287 // 1269
-	COPY $_owner r4 // 1269
-	PUSH r4 // 1272
-	LOAD $methodcallexpression287 "Runtime.IsWitness" // 1274
-	EXTCALL $methodcallexpression287 // 1295
-	POP $methodcallexpression287 // 1297
-	JMPIF $methodcallexpression287 @expect_methodcallexpression284 // 1299
-	ALIAS r4 $literalexpression290 // 1303
-	LOAD $literalexpression290 "Only the owner can update" // 1303
-	THROW $literalexpression290 // 1332
-	@expect_methodcallexpression284: NOP // 1335
-// Line 70:        return;
-	JMP @exit_onUpgrade // 1335
-@exit_onUpgrade: // 1338
-RET // 1339
+@entry_domainExist: // 1105
+// Line 67:
+// Line 68:    public domainExist(domainName:string): bool{
+ALIAS r1 $domainName // 1106
+POP $domainName // 1106
+// Line 69:
+// Line 70:        return Mail.domainExists(domainName);
+	ALIAS r2 $methodcallexpression268 // 1108
+	COPY $domainName r3 // 1108
+	PUSH r3 // 1111
+	LOAD $methodcallexpression268 "DomainExists" // 1113
+	PUSH $methodcallexpression268 // 1129
+	LOAD $methodcallexpression268 "mail" // 1131
+	CTX $methodcallexpression268 $methodcallexpression268 // 1139
+	SWITCH $methodcallexpression268 // 1142
+	POP $methodcallexpression268 // 1144
+	PUSH $methodcallexpression268 // 1146
+	JMP @exit_domainExist // 1148
+@exit_domainExist: // 1151
+RET // 1152
 // Line 71:    }
 
-// ********* onKill Trigger ***********
-@entry_onKill: // 1340
-ALIAS r1 $dataGet // 1341
-LOAD $dataGet "Data.Get" // 1341
-ALIAS r2 $contractName // 1353
-LOAD $contractName "provingground" // 1353
-ALIAS r3 $_owner // 1370
+// ********* quotePrice Method ***********
+@entry_quotePrice: // 1153
+// Line 72:
+// Line 73:    public quotePrice(baseSymbol:string, quoteSymbol:string, amount:number): number {
+ALIAS r1 $baseSymbol // 1154
+POP $baseSymbol // 1154
+ALIAS r2 $quoteSymbol // 1156
+POP $quoteSymbol // 1156
+ALIAS r3 $amount // 1158
+POP $amount // 1158
+CAST $amount $amount #Number // 1160
+// Line 74:        local qu: number = Oracle.quote(baseSymbol,quoteSymbol,amount);
+	ALIAS r4 $qu // 1164
+	ALIAS r5 $methodcallexpression280 // 1164
+	COPY $amount r6 // 1164
+	PUSH r6 // 1167
+	COPY $quoteSymbol r6 // 1169
+	PUSH r6 // 1172
+	COPY $baseSymbol r6 // 1174
+	PUSH r6 // 1177
+	LOAD $methodcallexpression280 "Oracle.Quote" // 1179
+	EXTCALL $methodcallexpression280 // 1195
+	COPY $methodcallexpression280 $qu // 1197
+// Line 75:       return qu;
+	COPY $qu r5 // 1200
+	PUSH r5 // 1203
+	JMP @exit_quotePrice // 1205
+@exit_quotePrice: // 1208
+RET // 1209
+// Line 76:    }
+
+// ********* onUpgrade Trigger ***********
+@entry_onUpgrade: // 1210
+ALIAS r1 $dataGet // 1211
+LOAD $dataGet "Data.Get" // 1211
+ALIAS r2 $contractName // 1223
+LOAD $contractName "provingground" // 1223
+ALIAS r3 $_owner // 1240
 // reading global: _owner
-LOAD r0 8 // 1370
-PUSH r0 // 1375
-LOAD r0 "_owner" // 1377
-PUSH r0 // 1387
-PUSH $contractName // 1389
-EXTCALL $dataGet // 1391
-POP $_owner // 1393
-PUSH $_owner // 1395
-EXTCALL "Address()" // 1397
-POP $_owner // 1412
-// Line 72:    
-// Line 73:    trigger onKill(from:address){
-ALIAS r1 $from // 1414
-POP $from // 1414
-PUSH $from // 1416
-EXTCALL "Address()" // 1418
-POP $from // 1433
-// Line 74:        Runtime.expect(Runtime.isWitness(_owner), "Only the owner can delete");
-	ALIAS r2 $methodcallexpression300 // 1435
-	COPY $_owner r4 // 1435
-	PUSH r4 // 1438
-	LOAD $methodcallexpression300 "Runtime.IsWitness" // 1440
-	EXTCALL $methodcallexpression300 // 1461
-	POP $methodcallexpression300 // 1463
-	JMPIF $methodcallexpression300 @expect_methodcallexpression297 // 1465
-	ALIAS r4 $literalexpression303 // 1469
-	LOAD $literalexpression303 "Only the owner can delete" // 1469
-	THROW $literalexpression303 // 1498
-	@expect_methodcallexpression297: NOP // 1501
-// Line 75:        return;
-	JMP @exit_onKill // 1501
-@exit_onKill: // 1504
-RET // 1505
+LOAD r0 8 // 1240
+PUSH r0 // 1245
+LOAD r0 "_owner" // 1247
+PUSH r0 // 1257
+PUSH $contractName // 1259
+EXTCALL $dataGet // 1261
+POP $_owner // 1263
+PUSH $_owner // 1265
+EXTCALL "Address()" // 1267
+POP $_owner // 1282
+// Line 77:
+// Line 78:    trigger onUpgrade(from:address)
+ALIAS r1 $from // 1284
+POP $from // 1284
+PUSH $from // 1286
+EXTCALL "Address()" // 1288
+POP $from // 1303
+// Line 79:    {
+// Line 80:        Runtime.expect(Runtime.isWitness(_owner), "Only the owner can update");
+	ALIAS r2 $methodcallexpression299 // 1305
+	COPY $_owner r4 // 1305
+	PUSH r4 // 1308
+	LOAD $methodcallexpression299 "Runtime.IsWitness" // 1310
+	EXTCALL $methodcallexpression299 // 1331
+	POP $methodcallexpression299 // 1333
+	JMPIF $methodcallexpression299 @expect_methodcallexpression296 // 1335
+	ALIAS r4 $literalexpression302 // 1339
+	LOAD $literalexpression302 "Only the owner can update" // 1339
+	THROW $literalexpression302 // 1368
+	@expect_methodcallexpression296: NOP // 1371
+// Line 81:        return;
+	JMP @exit_onUpgrade // 1371
+@exit_onUpgrade: // 1374
+RET // 1375
+// Line 82:    }
+
+// ********* onKill Trigger ***********
+@entry_onKill: // 1376
+ALIAS r1 $dataGet // 1377
+LOAD $dataGet "Data.Get" // 1377
+ALIAS r2 $contractName // 1389
+LOAD $contractName "provingground" // 1389
+ALIAS r3 $_owner // 1406
+// reading global: _owner
+LOAD r0 8 // 1406
+PUSH r0 // 1411
+LOAD r0 "_owner" // 1413
+PUSH r0 // 1423
+PUSH $contractName // 1425
+EXTCALL $dataGet // 1427
+POP $_owner // 1429
+PUSH $_owner // 1431
+EXTCALL "Address()" // 1433
+POP $_owner // 1448
+// Line 83:    
+// Line 84:    trigger onKill(from:address){
+ALIAS r1 $from // 1450
+POP $from // 1450
+PUSH $from // 1452
+EXTCALL "Address()" // 1454
+POP $from // 1469
+// Line 85:        Runtime.expect(Runtime.isWitness(_owner), "Only the owner can delete");
+	ALIAS r2 $methodcallexpression312 // 1471
+	COPY $_owner r4 // 1471
+	PUSH r4 // 1474
+	LOAD $methodcallexpression312 "Runtime.IsWitness" // 1476
+	EXTCALL $methodcallexpression312 // 1497
+	POP $methodcallexpression312 // 1499
+	JMPIF $methodcallexpression312 @expect_methodcallexpression309 // 1501
+	ALIAS r4 $literalexpression315 // 1505
+	LOAD $literalexpression315 "Only the owner can delete" // 1505
+	THROW $literalexpression315 // 1534
+	@expect_methodcallexpression309: NOP // 1537
+// Line 86:        return;
+	JMP @exit_onKill // 1537
+@exit_onKill: // 1540
+RET // 1541
