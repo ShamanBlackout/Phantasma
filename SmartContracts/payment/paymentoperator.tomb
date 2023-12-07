@@ -26,7 +26,7 @@ contract paymentoperator{
     }
 
 
-    private addOrRemovePayment(symbol:string,choice:string){
+    private _addOrRemovePayment(symbol:string,choice:string){
         Runtime.expect(Runtime.isWitness(_owner), "Unauthorized user");
         Runtime.expect(Token.exists(symbol),"Only a Token or NFT can be added as payment");
         if(symbol == "add"){
@@ -37,6 +37,12 @@ contract paymentoperator{
         }
     }
 
+    private _transferPayment()
+    {
+
+        
+    }
+
     /******************************************************************
         !Design Choice:
             Will create 2 different functions for user simplicity
@@ -45,12 +51,42 @@ contract paymentoperator{
     *******************************************************************/
     public addAcceptablePayment(symbol:string ,from:address){
         Runtime.expect(!acceptablePayments.has(symbol),"Symbol has already been added as an acceptable form of payment");
-        this.addOrRemovePayment(symbol,"add");
+        this._addOrRemovePayment(symbol,"add");
 
     }
      public removeAcceptablePayment(symbol:string ,from:address){
         Runtime.expect(acceptablePayments.has(symbol),"Symbol has not been added as an acceptable form of payment");
-        this.addOrRemovePayment(symbol,"remove");
+        this._addOrRemovePayment(symbol,"remove");
+
+    }
+    /**************************************************************************************
+    @Parameters:
+        @symbol_1: token/nft to transfer
+        @symbol_2: token/nft to transfer
+
+    Payment should be robust enough to handle transferring an NFT or transferring a Token
+
+    Possible Issues: Depending on the NFT or Token contract that is being used the OnTriggers
+    may differ in how they are handled.
+        ex: onSend trigger from one contract may not a non-contract owner to send the token
+        ---checks on how to handle this needs to be appropriated.
+
+
+
+
+        ???How do I want to handle users transferring money to another user. Should they transfer it to the contract first + sum?
+    ***************************************************************************************/
+    public processPayment(symbol_1:string,symbol_2:string,){
+
+         if(!acceptablePayments.has(symbol_1) || !acceptablePayments.has(symbol_2)){
+            throw symbol_1 + "Acceptable Payment is: " + acceptablePayments.has(symbol_1) +" ____ while "+symbol_2+ " Acceptable Payment is: "+ acceptablePayments.has(symbol_2);
+        }
+
+        if(!Token.exists(symbol_1) || !Token.exists(symbol_2)){
+            throw symbol_1 + "exist: " + Token.exists(symbol_1) +" ____ while "+symbol_2+ " exists: "+ Token.exists(symbol_2);
+        }
+
+
 
     }
 

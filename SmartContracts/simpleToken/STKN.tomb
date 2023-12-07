@@ -1,0 +1,57 @@
+token STKN {
+    import Runtime;
+    import Token;
+
+    global _owner: address;
+    
+    property name: string = "Simple Token";
+    property symbol: string = "STKN";
+    property isDivisible: bool = true;
+    property isFungible: bool = true;
+    property isFinite: bool = true;
+    property isBurnable: bool = true;
+    property decimals: number = 2;
+    property maxSupply: number = 100000000 ; //0 for an infinite
+    property isCapped: bool = true;
+    property isTransferable: bool = true;
+    property owner: address = _owner;
+
+
+    constructor(owner:address){
+        _owner = owner;
+
+    }
+
+    public mint(amount:number){
+        Runtime.expect(Runtime.isWitness(_owner),"Invalid verification.Dust yourself off and try again.");
+        local singleToken: number = 10^Token.getDecimals($THIS_SYMBOL);
+        amount = amount * singleToken;
+        Token.mint(_owner, _owner, $THIS_SYMBOL, amount);
+    }
+
+    public transfer(from:address,to:address,amount:number){
+        Runtime.expect(Runtime.isWitness(from),"Improper verification");
+        local singleToken: number = 10^Token.getDecimals($THIS_SYMBOL);
+        amount = amount * singleToken;
+        Token.transfer(from,to,$THIS_SYMBOL,amount);
+    }
+
+    trigger onUpgrade(from:address){
+        Runtime.expect(Runtime.isWitness(_owner),"Invalid verification.Dust yourself off and try again.");
+    }
+    trigger onBurn(from:address, to:address, symbol:string, tokenID:number){
+         Runtime.expect(Runtime.isWitness(from),"Improper verification");
+    }
+    trigger onMint(from:address, to:address, symbol:string, tokenID:number){
+        Runtime.expect(Runtime.isWitness(_owner),"Improper verification");
+
+    }
+
+    trigger onSend(from:address, to:address, symbol:string, amount:number){
+        Runtime.expect(Runtime.isWitness(from),"Improper verification");
+
+    }
+    trigger onReceive(from:address, to:address, symbol:string, amount:number){
+
+    }
+}
