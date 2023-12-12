@@ -59,6 +59,15 @@ contract paymentoperator{
         this._addOrRemovePayment(symbol,"remove");
 
     }
+    /*********************************
+        How can I list tokens 
+    **********************************/
+    private _swapTokens(from:address,to:address){
+
+        Runtime.expect(Runtime.isWitness(from),"");
+
+
+    }
     /**************************************************************************************
     @Parameters:
         @symbol_1: token/nft to transfer

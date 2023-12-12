@@ -17,6 +17,7 @@ const nexus = "simnet";
  * account - Address of the account that contains the NFT's
  * chain - chain the data is found
  ********************************************************/
+
 async function getAccountNftsByContract(
   contractSymbol: string,
   account: string,
@@ -72,11 +73,111 @@ async function getAccountNftsByContract(
 
   return nfts;
 }
+/************************************************************************
+ * Usage: Only used to
+ * @param contract
+ * @param method
+ * @param args
+ ***********************************************************************/
+async function invokeCalls(contract: string, method: string, args: any[]) {
+  //ts-ignore to ignore typescript warning about API null
+  //@ts-ignore
+  const RPC = new PhantasmaTS.PhantasmaAPI(host, null, nexus);
+
+  let sb = new PhantasmaTS.ScriptBuilder();
+  sb.CallContract(contract, method, args);
+  let script = sb.EndScript();
+  let targetNet = "main";
+
+  // NOTE - we assume RPC was instantiated previously already, check other samples to see how
+  let response = await RPC.invokeRawScript(targetNet, script);
+
+  const decoder = new PhantasmaTS.Decoder(response.result);
+  const value = decoder.readVmObject();
+  console.log(value); // print the decoded value to the console
+}
+
+//not yet working, please wait
+async function sendTrans(contract: string, method: string, args: any[]) {
+  //ts-ignore to ignore typescript warning about API null
+  //@ts-ignore
+  const RPC = new PhantasmaTS.PhantasmaAPI(host, null, nexus);
+
+  let node_pk = [
+    "21fcaa2b0dcf1b63c0d9bc032fc678581e9e71d7675fb70c6388dbfd35c438a4",
+    "a89be55f420594cd63ab935d3b379305d7769f039a8e734c8581d00dca683efa",
+    "d2f3b69a3a0af7f7a2a071e92ed1ecdc4ed9e0663b948c92885248c5ae537ba9",
+    "3093aefaf852d59df0b6d9de60249beb88a37af8a93bba88e18d81ae45664f1e",
+  ];
+
+  let fromAddress = "yourPublicWalletAddress";
+  let toAddress = "addressYourSendingTo";
+
+  //Creating a new Script Builder Object
+  let sb = new PhantasmaTS.ScriptBuilder();
+  let gasPrice = 10000;
+  let gasLimit = 21000;
+
+  //Making a Script
+  let script = sb
+    .AllowGas(fromAddress, sb.NullAddress, gasPrice, gasLimit)
+    .CallInterop("Runtime.TransferTokens", [
+      fromAddress,
+      toAddress,
+      "KCAL",
+      10000000000,
+    ]) //10000000000 = 1 KCAL
+    .SpendGas(fromAddress)
+    .EndScript();
+
+  //Used to set expiration date
+  let expiration = 5; //This is in miniutes
+  let getTime = new Date();
+  let date = new Date(getTime.getTime() + expiration * 60000);
+
+  let payload = Base16.encode("Phantasma-ts"); //Says '7068616e7461736d612d7473' in hex
+
+  //Creating New Transaction Object
+  let transaction = new PhantasmaTS.Transaction(
+    "testnet", //Nexus Name - if you're using mainnet change it to mainnet or simnet if you're using you localnode
+    "main", //Chain
+    script, //In string format
+    expiration, //Date Object
+    payload //Extra Info to attach to Transaction in Serialized Hex
+  );
+
+  //Sign's Transaction with Private Key
+  transaction.sign(node_pk[0]);
+
+  //Send Transaction
+  let txHash = await RPC.sendRawTransaction(transaction.toString(true));
+
+  //Return Transaction Hash
+  return txHash;
+}
 
 //P2K9zmyFDNGN6n6hHiTUAz6jqn29s5G1SWLiXwCVQcpHcQb - first address
 //P2K65RZhfxZhQcXKGgSPZL6c6hkygXipNxdeuW5FU531Bqc -2nd addresss
+
+/******************************************************
 getAccountNftsByContract(
-  "TNTT",
-  "P2K65RZhfxZhQcXKGgSPZL6c6hkygXipNxdeuW5FU531Bqc",
+  "XNFT",
+  "P2K9zmyFDNGN6n6hHiTUAz6jqn29s5G1SWLiXwCVQcpHcQb",
   "main"
 );
+******************************************************/
+let contract = "mail";
+let method = "PushMessage";
+let args = [
+  "P2K9zmyFDNGN6n6hHiTUAz6jqn29s5G1SWLiXwCVQcpHcQb",
+  "P2K65RZhfxZhQcXKGgSPZL6c6hkygXipNxdeuW5FU531Bqc",
+  "20077272D341A946043610E7D40F2ECE33D0AF82729C480FE2C8ACDD66DC2C2A50",
+];
+
+let node_pk = [
+  "21fcaa2b0dcf1b63c0d9bc032fc678581e9e71d7675fb70c6388dbfd35c438a4",
+  "a89be55f420594cd63ab935d3b379305d7769f039a8e734c8581d00dca683efa",
+  "d2f3b69a3a0af7f7a2a071e92ed1ecdc4ed9e0663b948c92885248c5ae537ba9",
+  "3093aefaf852d59df0b6d9de60249beb88a37af8a93bba88e18d81ae45664f1e",
+];
+console.log(node_pk[3]);

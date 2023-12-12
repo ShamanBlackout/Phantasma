@@ -4,6 +4,8 @@ contract provingground{
     import Runtime;
     import Oracle;
     import Mail;
+    import Array;
+    import Hash;
 
     global _owner: address;
 
@@ -11,6 +13,15 @@ contract provingground{
         _owner = owner;
     }
 
+    public testHash(test_hash: string): string{
+        local tx_hash = #DBEBEA827CBA60657F141FD6F94B929D85A95EFC9340ADCFFE0FD73A3CF2845C;
+        return tx_hash.toString();
+    }
+    public testHash2():hash {
+        local tx_hash = 0xDBEBEA827CBA60657F141FD6F94B929D85A95EFC9340ADCFFE0FD73A3CF2845C;
+
+        return tx_hash;
+    }
 
     /************************************************************************************************
     Not sure how to use Oracles yet. Plan was to use Oracles to check price of given token
@@ -22,8 +33,9 @@ contract provingground{
     }
 
     public sendMsg(from:address, target:address, archiveHash:hash){
-        local convToHash :hash = archiveHash;
-        Mail.pushMessage(from, target, convToHash);
+        local tx_hash = 0xDBEBEA827CBA60657F141FD6F94B929D85A95EFC9340ADCFFE0FD73A3CF2845C;
+        local arr: array<number> = {1,2,3};
+        Mail.pushMessage(from, target,arr);
     }
 
     //deprecated since Hash has issues
@@ -50,8 +62,8 @@ contract provingground{
     Log messages are shown under vm.txt within 
     docker
     *********************************************/
-    public logTest(message:string){
-        Runtime.log(message);
+    public logTest(){
+        Runtime.log("Testing");
     }
 
 

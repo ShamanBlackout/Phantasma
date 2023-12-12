@@ -1,0 +1,15 @@
+{
+  "name": "onboardts",
+  "version": "1.0.0",
+  "description": "Package file for running the Onboarding typescript files",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "phantasma-ts": "^0.1.68",
+    "tsc": "^2.0.4"
+  }
+}
