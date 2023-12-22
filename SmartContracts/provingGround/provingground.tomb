@@ -4,9 +4,9 @@ contract provingground{
     import Runtime;
     import Oracle;
     import Mail;
-    import Array;
-    import Hash;
-
+    import Number;
+    import Array;   
+    import Hash; 
     global _owner: address;
 
     constructor(owner:address){
@@ -18,7 +18,7 @@ contract provingground{
         return tx_hash.toString();
     }
     public testHash2():hash {
-        local tx_hash = 0xDBEBEA827CBA60657F141FD6F94B929D85A95EFC9340ADCFFE0FD73A3CF2845C;
+        local tx_hash = #0xDBEBEA827CBA60657F141FD6F94B929D85A95EFC9340ADCFFE0FD73A3CF2845C;
 
         return tx_hash;
     }
@@ -33,9 +33,9 @@ contract provingground{
     }
 
     public sendMsg(from:address, target:address, archiveHash:hash){
-        local tx_hash = 0xDBEBEA827CBA60657F141FD6F94B929D85A95EFC9340ADCFFE0FD73A3CF2845C;
-        local arr: array<number> = {1,2,3};
-        Mail.pushMessage(from, target,arr);
+        local tx_hash = "DBEBEA827CBA60657F141FD6F94B929D85A95EFC9340ADCFFE0FD73A3CF2845C";
+        //archiveHash = Hash.FromString(tx_hash);
+        Mail.pushMessage(from, target,archiveHash);
     }
 
     //deprecated since Hash has issues
@@ -79,6 +79,12 @@ contract provingground{
 
         return $TYPE_OF(bRole);
         
+    }
+
+    public testNumToBoolConversion(num:number):bool{
+        local convNumToBool: bool= Number.toBool(num);
+        //local convNumToBool: bool = true;
+        return convNumToBool;
     }
 
     public domainExist(domainName:string): bool{

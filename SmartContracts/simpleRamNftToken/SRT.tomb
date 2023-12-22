@@ -1,0 +1,127 @@
+struct simp_ram {
+  
+   weapon_name: string;
+   durability: number;
+   enchanted: number;
+}
+
+struct simp_rom {
+    name: string;
+    description: string;
+    infoURL: string;
+    imageURL: string;
+    created: timestamp;
+}
+
+
+
+token SRT {
+
+    import Runtime;
+    import NFT;
+    import Time;
+    import Number;
+   
+
+
+    global _owner:address;
+
+    property name: string = "Simple RAM NFT";
+    property symbol: string = "SRT";
+    property isFungible: bool = false;
+    property isFinite: bool = true;
+    property isBurnable: bool = true;
+    property maxSupply: number =  50; //0 for an infinite
+    property isTransferable: bool = true;
+    property owner: address = _owner;
+
+
+ 
+
+    nft simp<simp_rom,simp_ram>{
+
+        property name: string{
+            return _ROM.name;
+        }
+        property description: string{
+            return _ROM.description;
+        }
+        property infoURL: string{
+            return _ROM.infoURL;
+        }
+        property imageURL: string{
+            return _ROM.imageURL;
+        }
+        property created: timestamp{
+            return _ROM.created;
+        }
+        
+        property weapon_name: string{
+            return _RAM.weapon_name;
+        }
+        property durability: number{
+            return _RAM.durability;
+        }
+        property enchanted: number{
+            return _RAM.enchanted;
+        }
+
+    }
+
+   constructor(owner:address){
+        _owner = owner;
+        NFT.createSeries(owner,$THIS_SYMBOL,0,4,TokenSeries.Unique,simp);//TokenSeries.Unique
+    }
+
+    public Mint(from:address, to:address, seriesID:number){
+
+        local imageURL: string = "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/3fc0f3d5-6138-4b4c-bf96-985d8010c8c2/d9rqlio-baa2d9c9-4e45-4a76-9d11-2f2787d97311.png/v1/fill/w_1192,h_670,q_70,strp/chillrend___cristalgide___fan_art_tes_by_etrelley_d9rqlio-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTA4MCIsInBhdGgiOiJcL2ZcLzNmYzBmM2Q1LTYxMzgtNGI0Yy1iZjk2LTk4NWQ4MDEwYzhjMlwvZDlycWxpby1iYWEyZDljOS00ZTQ1LTRhNzYtOWQxMS0yZjI3ODdkOTczMTEucG5nIiwid2lkdGgiOiI8PTE5MjAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.vQSAwi5ovYTnP_c-JrKx4uA2PDn5wjJzIE8R8c_Kr3s";
+        local rom: simp_rom = Struct.simp_rom("Crystal Gazer","Formulated from the eye crystals of a dead angel","",imageURL,Time.now());
+        local ram: simp_ram = Struct.simp_ram("Crystal Gazer",5,1);
+        NFT.mint(from, to, $THIS_SYMBOL, rom, ram, seriesID);
+    }
+
+ 
+    public readRam(nftID: number):simp_ram{
+        local ram :simp_ram = NFT.readRAM<simp_ram>($THIS_SYMBOL,nftID);
+        return ram;
+    }
+    /****
+    Usage: Write to an existing NFT
+    @param nftID
+    @param weapon_name
+    @param durabiility 
+    @param enchanted
+    *****/
+    public updateDurability(from:address, nftID:number,durability: number){
+        local nftData: NFT = NFT.read($THIS_SYMBOL,nftID);
+        Runtime.expect(Runtime.isWitness(nftData.owner),"Must be owner of Nft to make changes");
+        Runtime.expect(durability >= 0 && durability <=10, "Durability has to be between 0-10");
+        local prev_ram: simp_ram = NFT.readRAM<simp_ram>($THIS_SYMBOL,nftID);
+
+        local new_ram: simp_ram = Struct.simp_ram(prev_ram.weapon_name,durability,prev_ram.enchanted);
+        NFT.write(from,$THIS_SYMBOL,nftID,new_ram);
+
+    }
+
+    trigger onUpgrade(from:address){
+        Runtime.expect(Runtime.isWitness(_owner),"Improper verification");
+
+    }
+
+    trigger onKill(from:address){
+         Runtime.expect(Runtime.isWitness(_owner),"Improper verification");
+
+    }
+    trigger onMint(from:address, to:address, symbol:string, tokenID:number) { 
+        Runtime.expect(Runtime.isWitness(from),"Improper verification");
+
+    }
+
+    trigger onSeries(from:address){
+
+    }
+    trigger onBurn(from:address, to:address, symbol:string, tokenID:number){
+         Runtime.expect(Runtime.isWitness(from),"Improper verification");
+    }
+}

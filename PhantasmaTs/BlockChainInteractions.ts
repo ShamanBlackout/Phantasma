@@ -42,7 +42,7 @@ async function getAccountNftsByContract(
   for (let id in nfts) {
     let rom = nfts[id];
     let byteArr = PhantasmaTS.hexToByteArray(rom);
-    //let testArr = PhantasmaTS.hexStringToUint8Array(crom); //does not correctly convert to a Uint8Array
+    //let testArr = PhantasmaTS.hexStringToUint8Array(rom); //does not correctly convert to a Uint8Array
 
     //Phantasmas hexToByteArray creates an extra character at the beginning of the array.Must remove it
     byteArr.shift();
@@ -159,13 +159,13 @@ async function sendTrans(contract: string, method: string, args: any[]) {
 //P2K9zmyFDNGN6n6hHiTUAz6jqn29s5G1SWLiXwCVQcpHcQb - first address
 //P2K65RZhfxZhQcXKGgSPZL6c6hkygXipNxdeuW5FU531Bqc -2nd addresss
 
-/******************************************************
 getAccountNftsByContract(
-  "XNFT",
+  "SRT",
   "P2K9zmyFDNGN6n6hHiTUAz6jqn29s5G1SWLiXwCVQcpHcQb",
   "main"
 );
-******************************************************/
+
+/***
 let contract = "mail";
 let method = "PushMessage";
 let args = [
@@ -181,3 +181,4 @@ let node_pk = [
   "3093aefaf852d59df0b6d9de60249beb88a37af8a93bba88e18d81ae45664f1e",
 ];
 console.log(node_pk[3]);
+ ********/
