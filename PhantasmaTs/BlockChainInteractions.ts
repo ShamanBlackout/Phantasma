@@ -97,88 +97,83 @@ async function invokeCalls(contract: string, method: string, args: any[]) {
   console.log(value); // print the decoded value to the console
 }
 
-//not yet working, please wait
-async function sendTrans(contract: string, method: string, args: any[]) {
+async function sendTrans(
+  contract: string,
+  method: string,
+  args: any[],
+  params: any[]
+) {
   //ts-ignore to ignore typescript warning about API null
   //@ts-ignore
   const RPC = new PhantasmaTS.PhantasmaAPI(host, null, nexus);
 
-  let node_pk = [
-    "21fcaa2b0dcf1b63c0d9bc032fc678581e9e71d7675fb70c6388dbfd35c438a4",
-    "a89be55f420594cd63ab935d3b379305d7769f039a8e734c8581d00dca683efa",
-    "d2f3b69a3a0af7f7a2a071e92ed1ecdc4ed9e0663b948c92885248c5ae537ba9",
-    "3093aefaf852d59df0b6d9de60249beb88a37af8a93bba88e18d81ae45664f1e",
-  ];
-
-  let fromAddress = "yourPublicWalletAddress";
-  let toAddress = "addressYourSendingTo";
-
   //Creating a new Script Builder Object
   let sb = new PhantasmaTS.ScriptBuilder();
-  let gasPrice = 10000;
-  let gasLimit = 21000;
+  let gasPrice = 100000;
+  let gasLimit = 2100;
+  console.log("before script");
+  console.log(PhantasmaTS.Address.IsValidAddress(args[0]));
+  let addy = PhantasmaTS.Address.FromText(args[0]);
 
-  //Making a Script
-  let script = sb
-    .AllowGas(fromAddress, sb.NullAddress, gasPrice, gasLimit)
-    .CallInterop("Runtime.TransferTokens", [
-      fromAddress,
-      toAddress,
-      "KCAL",
-      10000000000,
-    ]) //10000000000 = 1 KCAL
-    .SpendGas(fromAddress)
-    .EndScript();
+  sb.BeginScript()
+    .AllowGas(args[0], sb.NullAddress, gasPrice, gasLimit)
+    .CallContract(contract, method, params)
+    .SpendGas(args[0]);
+  let script = sb.EndScript();
 
-  //Used to set expiration date
   let expiration = 5; //This is in miniutes
   let getTime = new Date();
-  let date = new Date(getTime.getTime() + expiration * 60000);
+  let expiration_date = new Date(getTime.getTime() + expiration * 60000);
 
-  let payload = Base16.encode("Phantasma-ts"); //Says '7068616e7461736d612d7473' in hex
+  let payload = PhantasmaTS.Base16.encode("Phantasma-ts"); //Says '7068616e7461736d612d7473' in hex
+
+  console.log("before transaction");
 
   //Creating New Transaction Object
   let transaction = new PhantasmaTS.Transaction(
-    "testnet", //Nexus Name - if you're using mainnet change it to mainnet or simnet if you're using you localnode
+    nexus, //Nexus Name - if you're using mainnet change it to mainnet or simnet if you're using you localnode
     "main", //Chain
     script, //In string format
-    expiration, //Date Object
+    expiration_date, //Date Object
     payload //Extra Info to attach to Transaction in Serialized Hex
   );
 
-  //Sign's Transaction with Private Key
-  transaction.sign(node_pk[0]);
+  transaction.sign(args[1]);
 
+  let rawTx = PhantasmaTS.Base16.encodeUint8Array(transaction.ToByteAray(true));
   //Send Transaction
-  let txHash = await RPC.sendRawTransaction(transaction.toString(true));
+  let txHash = await RPC.sendRawTransaction(rawTx);
 
   //Return Transaction Hash
   return txHash;
 }
 
-//P2K9zmyFDNGN6n6hHiTUAz6jqn29s5G1SWLiXwCVQcpHcQb - first address
-//P2K65RZhfxZhQcXKGgSPZL6c6hkygXipNxdeuW5FU531Bqc -2nd addresss
+let node_addr = [
+  "P2K9zmyFDNGN6n6hHiTUAz6jqn29s5G1SWLiXwCVQcpHcQb",
+  "P2K65RZhfxZhQcXKGgSPZL6c6hkygXipNxdeuW5FU531Bqc",
+  "P2KAcEJk2UPvTP5rStzeeSJCboE9yEdA2meNVT7UNiKbdH3",
+  "P2KLvu4UWXFz4r86PsCrtPdJSgkqCSWTZHjDgqdXXJ6Se1v",
+];
 
+let node_WIF = [
+  "KxMn2TgXukYaNXx7tEdjh7qB2YaMgeuKy47j4rvKigHhBuZWeP3r",
+  "L2sTuSzangXQCFxXFXJqfPAKJsstKvQdkGqP9J2VFkFRbEjd1Ez6",
+  "L4Hmr2tsa7qNjp9syg4PW8MjLrrXobe7MNFWQmryg1jKzf8c3Y1D",
+  "Kxr8xW8gwX617zieFeS3ByWcFgEoGKbR1QJyJ1YgCKofP7mqudgH",
+];
+
+/*** 
 getAccountNftsByContract(
   "SRT",
   "P2K9zmyFDNGN6n6hHiTUAz6jqn29s5G1SWLiXwCVQcpHcQb",
   "main"
 );
-
-/***
-let contract = "mail";
-let method = "PushMessage";
-let args = [
-  "P2K9zmyFDNGN6n6hHiTUAz6jqn29s5G1SWLiXwCVQcpHcQb",
+*****/
+let args = [node_addr[1], node_WIF[1]];
+let params: any = [
   "P2K65RZhfxZhQcXKGgSPZL6c6hkygXipNxdeuW5FU531Bqc",
-  "20077272D341A946043610E7D40F2ECE33D0AF82729C480FE2C8ACDD66DC2C2A50",
+  "14274367853476878332044001253771695157132674583121480559500974127413648557120",
+  "6",
 ];
 
-let node_pk = [
-  "21fcaa2b0dcf1b63c0d9bc032fc678581e9e71d7675fb70c6388dbfd35c438a4",
-  "a89be55f420594cd63ab935d3b379305d7769f039a8e734c8581d00dca683efa",
-  "d2f3b69a3a0af7f7a2a071e92ed1ecdc4ed9e0663b948c92885248c5ae537ba9",
-  "3093aefaf852d59df0b6d9de60249beb88a37af8a93bba88e18d81ae45664f1e",
-];
-console.log(node_pk[3]);
- ********/
+sendTrans("SRT", "updateDurability", args, params);

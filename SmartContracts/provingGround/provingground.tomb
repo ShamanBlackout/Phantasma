@@ -5,6 +5,7 @@ contract provingground{
     import Oracle;
     import Mail;
     import Number;
+    import String;
     import Array;   
     import Hash; 
     global _owner: address;
@@ -80,12 +81,19 @@ contract provingground{
         return $TYPE_OF(bRole);
         
     }
+    
+    public convStrToBtyes(str:string):bytes{
+        conv
+        return String.toBytes(str);
+    }
 
     public testNumToBoolConversion(num:number):bool{
-        local convNumToBool: bool= Number.toBool(num);
+        local convNumToBool: bool = Number.toBool(num);
         //local convNumToBool: bool = true;
         return convNumToBool;
     }
+
+
 
     public domainExist(domainName:string): bool{
 

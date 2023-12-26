@@ -21,24 +21,27 @@
 // Line 21:    import NFT;
 // Line 22:    import Time;
 // Line 23:    import Number;
-// Line 24:   
-// Line 25:
-// Line 26:
-// Line 27:    global _owner:address;
+// Line 24:    import Map;
+// Line 25:    import Address;
+// Line 26:   
+// Line 27:
 // Line 28:
-// Line 29:    property name: string = "Simple RAM NFT";
-// Line 30:    property symbol: string = "SRT";
-// Line 31:    property isFungible: bool = false;
-// Line 32:    property isFinite: bool = true;
-// Line 33:    property isBurnable: bool = true;
-// Line 34:    property maxSupply: number =  50; //0 for an infinite
-// Line 35:    property isTransferable: bool = true;
-// Line 36:    property owner: address = _owner;
-// Line 37:
-// Line 38:
-// Line 39: 
+// Line 29:    global _owner:address;
+// Line 30:    global delegates: storage_map<address,number>;
+// Line 31:
+// Line 32:    property name: string = "Simple RAM NFT";
+// Line 33:    property symbol: string = "SRT";
+// Line 34:    property isFungible: bool = false;
+// Line 35:    property isFinite: bool = true;
+// Line 36:    property isBurnable: bool = true;
+// Line 37:    property maxSupply: number =  50; //0 for an infinite
+// Line 38:    property isTransferable: bool = true;
+// Line 39:    property owner: address = _owner;
 // Line 40:
-// Line 41:    nft simp<simp_rom,simp_ram>{
+// Line 41:
+// Line 42: 
+// Line 43:
+// Line 44:    nft simp<simp_rom,simp_ram>{
 
 // ********* getName Property ***********
 @entry_getName: // 0
@@ -57,9 +60,9 @@ ALIAS r3 $_ROM // 51
 LOAD r0 "ROM" // 51
 GET r2 $_ROM r0 // 58
 UNPACK $_ROM $_ROM // 62
-// Line 42:
-// Line 43:        property name: string{
-// Line 44:            return _ROM.name;
+// Line 45:
+// Line 46:        property name: string{
+// Line 47:            return _ROM.name;
 	COPY $_ROM r1 // 65
 	LOAD r2 "name" // 68
 	GET r1 r1 r2 // 76
@@ -67,7 +70,7 @@ UNPACK $_ROM $_ROM // 62
 	JMP @exit_getName // 82
 @exit_getName: // 85
 RET // 86
-// Line 45:        }
+// Line 48:        }
 
 // ********* getDescription Property ***********
 @entry_getDescription: // 87
@@ -86,8 +89,8 @@ ALIAS r3 $_ROM // 138
 LOAD r0 "ROM" // 138
 GET r2 $_ROM r0 // 145
 UNPACK $_ROM $_ROM // 149
-// Line 46:        property description: string{
-// Line 47:            return _ROM.description;
+// Line 49:        property description: string{
+// Line 50:            return _ROM.description;
 	COPY $_ROM r1 // 152
 	LOAD r2 "description" // 155
 	GET r1 r1 r2 // 170
@@ -95,7 +98,7 @@ UNPACK $_ROM $_ROM // 149
 	JMP @exit_getDescription // 176
 @exit_getDescription: // 179
 RET // 180
-// Line 48:        }
+// Line 51:        }
 
 // ********* getInfoURL Property ***********
 @entry_getInfoURL: // 181
@@ -114,8 +117,8 @@ ALIAS r3 $_ROM // 232
 LOAD r0 "ROM" // 232
 GET r2 $_ROM r0 // 239
 UNPACK $_ROM $_ROM // 243
-// Line 49:        property infoURL: string{
-// Line 50:            return _ROM.infoURL;
+// Line 52:        property infoURL: string{
+// Line 53:            return _ROM.infoURL;
 	COPY $_ROM r1 // 246
 	LOAD r2 "infoURL" // 249
 	GET r1 r1 r2 // 260
@@ -123,7 +126,7 @@ UNPACK $_ROM $_ROM // 243
 	JMP @exit_getInfoURL // 266
 @exit_getInfoURL: // 269
 RET // 270
-// Line 51:        }
+// Line 54:        }
 
 // ********* getImageURL Property ***********
 @entry_getImageURL: // 271
@@ -142,8 +145,8 @@ ALIAS r3 $_ROM // 322
 LOAD r0 "ROM" // 322
 GET r2 $_ROM r0 // 329
 UNPACK $_ROM $_ROM // 333
-// Line 52:        property imageURL: string{
-// Line 53:            return _ROM.imageURL;
+// Line 55:        property imageURL: string{
+// Line 56:            return _ROM.imageURL;
 	COPY $_ROM r1 // 336
 	LOAD r2 "imageURL" // 339
 	GET r1 r1 r2 // 351
@@ -151,7 +154,7 @@ UNPACK $_ROM $_ROM // 333
 	JMP @exit_getImageURL // 357
 @exit_getImageURL: // 360
 RET // 361
-// Line 54:        }
+// Line 57:        }
 
 // ********* getCreated Property ***********
 @entry_getCreated: // 362
@@ -170,8 +173,8 @@ ALIAS r3 $_ROM // 413
 LOAD r0 "ROM" // 413
 GET r2 $_ROM r0 // 420
 UNPACK $_ROM $_ROM // 424
-// Line 55:        property created: timestamp{
-// Line 56:            return _ROM.created;
+// Line 58:        property created: timestamp{
+// Line 59:            return _ROM.created;
 	COPY $_ROM r1 // 427
 	LOAD r2 "created" // 430
 	GET r1 r1 r2 // 441
@@ -179,7 +182,7 @@ UNPACK $_ROM $_ROM // 424
 	JMP @exit_getCreated // 447
 @exit_getCreated: // 450
 RET // 451
-// Line 57:        }
+// Line 60:        }
 
 // ********* getWeapon_name Property ***********
 @entry_getWeapon_name: // 452
@@ -198,9 +201,9 @@ ALIAS r3 $_RAM // 503
 LOAD r0 "RAM" // 503
 GET r2 $_RAM r0 // 510
 UNPACK $_RAM $_RAM // 514
-// Line 58:        
-// Line 59:        property weapon_name: string{
-// Line 60:            return _RAM.weapon_name;
+// Line 61:        
+// Line 62:        property weapon_name: string{
+// Line 63:            return _RAM.weapon_name;
 	COPY $_RAM r1 // 517
 	LOAD r2 "weapon_name" // 520
 	GET r1 r1 r2 // 535
@@ -208,7 +211,7 @@ UNPACK $_RAM $_RAM // 514
 	JMP @exit_getWeapon_name // 541
 @exit_getWeapon_name: // 544
 RET // 545
-// Line 61:        }
+// Line 64:        }
 
 // ********* getDurability Property ***********
 @entry_getDurability: // 546
@@ -227,8 +230,8 @@ ALIAS r3 $_RAM // 597
 LOAD r0 "RAM" // 597
 GET r2 $_RAM r0 // 604
 UNPACK $_RAM $_RAM // 608
-// Line 62:        property durability: number{
-// Line 63:            return _RAM.durability;
+// Line 65:        property durability: number{
+// Line 66:            return _RAM.durability;
 	COPY $_RAM r1 // 611
 	LOAD r2 "durability" // 614
 	GET r1 r1 r2 // 628
@@ -236,7 +239,7 @@ UNPACK $_RAM $_RAM // 608
 	JMP @exit_getDurability // 634
 @exit_getDurability: // 637
 RET // 638
-// Line 64:        }
+// Line 67:        }
 
 // ********* getEnchanted Property ***********
 @entry_getEnchanted: // 639
@@ -255,8 +258,8 @@ ALIAS r3 $_RAM // 690
 LOAD r0 "RAM" // 690
 GET r2 $_RAM r0 // 697
 UNPACK $_RAM $_RAM // 701
-// Line 65:        property enchanted: number{
-// Line 66:            return _RAM.enchanted;
+// Line 68:        property enchanted: number{
+// Line 69:            return _RAM.enchanted;
 	COPY $_RAM r1 // 704
 	LOAD r2 "enchanted" // 707
 	GET r1 r1 r2 // 720
