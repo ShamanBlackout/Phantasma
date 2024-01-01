@@ -110,7 +110,7 @@ async function sendTrans(
   //Creating a new Script Builder Object
   let sb = new PhantasmaTS.ScriptBuilder();
   let gasPrice = 100000;
-  let gasLimit = 2100;
+  let gasLimit = 99999;
   console.log("before script");
   console.log(PhantasmaTS.Address.IsValidAddress(args[0]));
   let addy = PhantasmaTS.Address.FromText(args[0]);
