@@ -1,8 +1,5 @@
 const { PhantasmaTS } = require("phantasma-ts");
 
-var host = "http://localhost:7077/rpc";
-var nexus = "simnet";
-
 async function sendTransaction() {
   let WIF = "KxMn2TgXukYaNXx7tEdjh7qB2YaMgeuKy47j4rvKigHhBuZWeP3r"; //In WIF Format - simnet node 0 WIF
   let fromAddress = "P2K9zmyFDNGN6n6hHiTUAz6jqn29s5G1SWLiXwCVQcpHcQb"; //simnet node0
@@ -103,7 +100,7 @@ async function stakeSOUL() {
     payload //Extra Info to attach to Transaction in Serialized Hex
   );
 
-  //Sign's Transaction with Private Key
+  //Sign's Transaction with WIF
   transaction.sign(WIF);
 
   let hexEncodedTx = transaction.ToStringEncoded(true);
@@ -117,15 +114,17 @@ async function stakeSOUL() {
 
 async function deployContract() {
   //Wallet Stuff
-  let WIF = "WIF"; //In wif Format
-  let fromAddress = "publicAddress";
+  let WIF = "KxMn2TgXukYaNXx7tEdjh7qB2YaMgeuKy47j4rvKigHhBuZWeP3r"; //In wif Format
+  let fromAddress = "P2K9zmyFDNGN6n6hHiTUAz6jqn29s5G1SWLiXwCVQcpHcQb";
 
   //Contract Stuff
-  let pvm = "PVM HEX String";
-  let abi = "ABI HEX String";
+  let pvm =
+    "000D00040F52756E74696D652E56657273696F6E070004000D010301081A0001000A005E000D00043243757272656E74206E657875732070726F746F636F6C2076657273696F6E2073686F756C642062652038206F72206D6F72650C0000040203020D00040941646472657373282907000402020203020301000D020408446174612E53657403010D0004065F6F776E6572030007020B000D010436436F6E747261637420686173206265656E206465706C6F796564206279205068616E7461736D615453205375636365737366756C6C79030108D800000B000D010408446174612E4765740D02040C6465706C6F797465737430300D0003010803000D0004065F6F776E6572030003020701040303030D00040941646472657373282907000403040103010D0004094164647265737328290700040102030403040D02041152756E74696D652E49735769746E65737307020402090275010D040415496D70726F70657220766572696669636174696F6E0C0400000B000D010408446174612E4765740D02040C6465706C6F797465737430300D0003010803000D0004065F6F776E6572030003020701040303030D00040941646472657373282907000403040103010D0004094164647265737328290700040102030403040D02041152756E74696D652E49735769746E65737307020402090213020D040415496D70726F70657220766572696669636174696F6E0C0400000B";
+  let abi =
+    "040A496E697469616C697A65000000000001056F776E6572080474657374049700000000096F6E5570677261646500D9000000010466726F6D08066F6E4B696C6C0077010000010466726F6D0800";
   let gasPrice = PhantasmaTS.DomainSettings.DefaultMinimumGasFee; //Internal Blockchain minimum gas fee needed - i.e 100000
   let gasLimit = 21000;
-  let contractName = "ContractName"; //Whatever you want
+  let contractName = "deploytest00"; //Whatever you want
 
   //Creating a new Script Builder Object
   let sb = new PhantasmaTS.ScriptBuilder();
@@ -170,7 +169,7 @@ async function deployContract() {
   //Deploying Contract Requires POW -- Use a value of 5 to increase the hash difficulty by at least 5
   transaction.mineTransaction(5);
 
-  //Signs Transaction with your private key
+  //Signs Transaction with your WIF
   transaction.sign(WIF);
 
   let hexEncodedTx = transaction.ToStringEncoded(true);
@@ -181,3 +180,5 @@ async function deployContract() {
   //Returns Transaction Hash
   return txHash;
 }
+
+deployContract();
