@@ -61,4 +61,56 @@ async function sendTransaction() {
   return txHash;
 }
 
-sendTransaction();
+async function stakeSOUL() {
+  let WIF = "KxMn2TgXukYaNXx7tEdjh7qB2YaMgeuKy47j4rvKigHhBuZWeP3r"; //WIF format
+
+  let fromAddress = "P2K9zmyFDNGN6n6hHiTUAz6jqn29s5G1SWLiXwCVQcpHcQb"; // Phantasma Public Address
+
+  //Creating a new Script Builder Object
+  let sb = new PhantasmaTS.ScriptBuilder();
+  let gasPrice = PhantasmaTS.DomainSettings.DefaultMinimumGasFee; //Internal Blockchain minimum gas fee needed
+  let gasLimit = 21000;
+  let amount = String(10 * 10 ** 8); // 100 the amount - 10**8 it's to get the decimals to the desired amount
+  // Soul has 8 decimals places.
+
+  //Creating RPC Connection **(Needs To Be Updated)
+  let RPC = new PhantasmaTS.PhantasmaAPI(
+    "http://localhost:7077/rpc",
+    null,
+    "simnet"
+  );
+
+  //Making a Script
+  let script = sb
+    .AllowGas(fromAddress, sb.NullAddress, gasPrice, gasLimit)
+    .CallContract("stake", "Stake", [fromAddress, amount])
+    .SpendGas(fromAddress)
+    .EndScript();
+
+  //Used to set expiration date
+  let expiration = 5; //This is in miniutes
+  let getTime = new Date();
+  let expiration_date = new Date(getTime.getTime() + expiration * 60000);
+
+  let payload = "7068616e7461736d612d7473"; //Says 'Phantasma-ts' in hex
+
+  //Creating New Transaction Object
+  let transaction = new PhantasmaTS.Transaction(
+    "simnet", //Nexus Name - if you're using mainnet change it to mainnet
+    "main", //Chain
+    script, //In string format
+    expiration_date, //Date Object
+    payload //Extra Info to attach to Transaction in Serialized Hex
+  );
+
+  //Sign's Transaction with Private Key
+  transaction.sign(WIF);
+
+  let hexEncodedTx = transaction.ToStringEncoded(true);
+
+  //Send Transaction
+  let txHash = await RPC.sendRawTransaction(hexEncodedTx);
+
+  //Return Transaction Hash
+  return txHash;
+}
