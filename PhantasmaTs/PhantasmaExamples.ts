@@ -12,11 +12,11 @@ async function sendTransaction() {
   let RPC = new PhantasmaTS.PhantasmaAPI(
     "http://localhost:7077/rpc",
     null,
-    "mainnet"
+    "simnet"
   );
 
   //set Gas parameters for Runtime.TransferTokens
-  let gasPrice = PhantasmaTS.DomainSettings.DefaultMinimumGasFee; //Internal Blockchain minimum gas fee needed
+  let gasPrice = PhantasmaTS.DomainSettings.DefaultMinimumGasFee; //Internal Blockchain minimum gas fee needed - i.e 100000
   let gasLimit = 9999;
 
   //Creating a new Script Builder Object
@@ -68,7 +68,7 @@ async function stakeSOUL() {
 
   //Creating a new Script Builder Object
   let sb = new PhantasmaTS.ScriptBuilder();
-  let gasPrice = PhantasmaTS.DomainSettings.DefaultMinimumGasFee; //Internal Blockchain minimum gas fee needed
+  let gasPrice = PhantasmaTS.DomainSettings.DefaultMinimumGasFee; //Internal Blockchain minimum gas fee needed - i.e 100000
   let gasLimit = 21000;
   let amount = String(10 * 10 ** 8); // 100 the amount - 10**8 it's to get the decimals to the desired amount
   // Soul has 8 decimals places.
@@ -112,5 +112,72 @@ async function stakeSOUL() {
   let txHash = await RPC.sendRawTransaction(hexEncodedTx);
 
   //Return Transaction Hash
+  return txHash;
+}
+
+async function deployContract() {
+  //Wallet Stuff
+  let WIF = "WIF"; //In wif Format
+  let fromAddress = "publicAddress";
+
+  //Contract Stuff
+  let pvm = "PVM HEX String";
+  let abi = "ABI HEX String";
+  let gasPrice = PhantasmaTS.DomainSettings.DefaultMinimumGasFee; //Internal Blockchain minimum gas fee needed - i.e 100000
+  let gasLimit = 21000;
+  let contractName = "ContractName"; //Whatever you want
+
+  //Creating a new Script Builder Object
+  let sb = new PhantasmaTS.ScriptBuilder();
+
+  //New RPC and Peers Needed
+  //Creating RPC Connection, use ('http://testnet.phantasma.io:5101/rpc', null, 'testnet') for testing
+  let RPC = new PhantasmaTS.PhantasmaAPI(
+    "http://localhost:7077/rpc",
+    null,
+    "simnet"
+  );
+
+  //Making a Script
+  let script = sb
+    .AllowGas(fromAddress, sb.NullAddress, gasPrice, gasLimit)
+    .CallInterop("Runtime.DeployContract", [
+      fromAddress,
+      contractName,
+      pvm,
+      abi,
+    ])
+    .SpendGas(fromAddress)
+    .EndScript();
+
+  //Used to set expiration date
+  let expiration = 5; //This is in miniutes
+  let getTime = new Date();
+  let expiration_date = new Date(getTime.getTime() + expiration * 60000);
+
+  //Setting Temp Payload
+  let payload = "MyApp";
+
+  //Creating New Transaction Object
+  let transaction = new PhantasmaTS.Transaction(
+    "simnet", //Nexus Name
+    "main", //Chain
+    script, //In string format
+    expiration_date, //Date Object
+    payload //Extra Info to attach to Transaction in Serialized Hex
+  );
+
+  //Deploying Contract Requires POW -- Use a value of 5 to increase the hash difficulty by at least 5
+  transaction.mineTransaction(5);
+
+  //Signs Transaction with your private key
+  transaction.sign(WIF);
+
+  let hexEncodedTx = transaction.ToStringEncoded(true);
+
+  //Sends Transaction
+  let txHash = await RPC.sendRawTransaction(hexEncodedTx);
+
+  //Returns Transaction Hash
   return txHash;
 }
