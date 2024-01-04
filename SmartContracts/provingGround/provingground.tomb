@@ -1,4 +1,11 @@
+/**********************************************************
+Creator: Shaman Blackout
 
+Purpose: A smart contract that is used for testing purposes
+only. Test out different functionality of TOMB in an effort
+to understand how everything works.
+
+**********************************************************/
 contract provingground{
  
     import Runtime;

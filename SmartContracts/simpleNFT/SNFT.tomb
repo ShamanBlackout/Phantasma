@@ -1,3 +1,10 @@
+/**********************************************************
+Creator: Shaman Blackout
+
+Purpose: A basic Token smart contract that allows
+the user to test minting an NFT
+
+**********************************************************/
 struct simp_ram {
   
    
