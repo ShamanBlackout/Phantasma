@@ -1,3 +1,10 @@
+/**********************************************************
+Creator: Shaman Blackout
+
+Purpose: A basic smart contract that emulates the math 
+power function. Not very robust
+**********************************************************/
+
 contract simplecon00 {
 
     import Runtime;

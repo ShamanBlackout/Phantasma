@@ -189,5 +189,3 @@ async function deployContract() {
   //Returns Transaction Hash
   return txHash;
 }
-
-deployContract();

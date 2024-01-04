@@ -1,3 +1,12 @@
+/**********************************************************
+Creator: Shaman Blackout
+
+Purpose: A basic Token smart contract that allows
+the user to test minting an NFT with RAM. Please note that
+you will only be able to mint 1 nft with ram using this 
+contract. Working out why this is ...........
+**********************************************************/
+
 struct simp_ram {
   weapon_name: string;
   durability: number;
