@@ -161,19 +161,19 @@ let node_WIF = [
   "L4Hmr2tsa7qNjp9syg4PW8MjLrrXobe7MNFWQmryg1jKzf8c3Y1D",
   "Kxr8xW8gwX617zieFeS3ByWcFgEoGKbR1QJyJ1YgCKofP7mqudgH",
 ];
-
-/*** 
+/**
 getAccountNftsByContract(
-  "SRT",
+  "SDT",
   "P2K9zmyFDNGN6n6hHiTUAz6jqn29s5G1SWLiXwCVQcpHcQb",
   "main"
 );
-*****/
+**/
+
 let args = [node_addr[1], node_WIF[1]];
 let params: any = [
   "P2K65RZhfxZhQcXKGgSPZL6c6hkygXipNxdeuW5FU531Bqc",
-  "14274367853476878332044001253771695157132674583121480559500974127413648557120",
+  "23026707334428162792539697278208738065996405703899924061098963047980672034548",
   "6",
 ];
 
-sendTrans("SRT", "updateDurability", args, params);
+sendTrans("SDT", "updateDurability", args, params);

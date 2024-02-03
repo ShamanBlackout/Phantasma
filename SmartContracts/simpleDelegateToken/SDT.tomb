@@ -86,9 +86,17 @@ token SDT {
 
     public addDelegate(delegate:address){
         Runtime.expect(Runtime.isWitness(_owner),"Must be Owner to add Delegate");
-        local delegate_str: string = delegate;
-        Runtime.expect(!delegates.has(delegate),delegate_str + "User is already a delegate");
+        Runtime.expect(!delegates.has(delegate),"User is already a delegate");
         delegates.set(delegate,1);
+    }
+    
+    public isDelegate(delegate:address): bool{
+        return delegates.has(delegate);
+    }
+    public removeDelegate(delegate:address){
+        Runtime.expect(Runtime.isWitness(_owner),"Must be Owner to add Delegate");
+        Runtime.expect(delegates.has(delegate),"User is not a delegate");
+        delegates.remove(delegate);
     }
 
  
