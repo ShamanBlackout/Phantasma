@@ -1,0 +1,33 @@
+/**********************************************************
+Creator: Shaman Blackout
+
+Purpose: A test smart contract that was deployed using 
+Phantasma-ts instead of through Phantasma-Hub. Will use 
+this contract to test out interaction between phantasma-ts
+**********************************************************/
+
+contract deploytest00 {
+
+    import Runtime;
+    global _owner: address;
+
+
+    constructor(owner:address){
+        _owner = owner;
+    }
+
+    public test():string{
+        return "Contract has been deployed by PhantasmaTS Successfully";
+    }
+
+    trigger onUpgrade(from:address){
+        Runtime.expect(Runtime.isWitness(_owner),"Improper verification");
+
+    }
+
+    trigger onKill(from:address){
+         Runtime.expect(Runtime.isWitness(_owner),"Improper verification");
+
+    }
+
+}

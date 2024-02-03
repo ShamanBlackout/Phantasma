@@ -1,3 +1,14 @@
+/**********************************************************
+Creator: Shaman Blackout
+
+Purpose: A basic Token smart contract that allows
+the user to test delegating.The user shoudld be able to 
+select a delefator to act on behalf of them. Allows the 
+delegator to change the RAM. Please note that
+you will only be able to mint 1 nft with ram using this 
+contract. Working out why this is ...........
+**********************************************************/
+
 struct simp_ram {
   
    weapon_name: string;
