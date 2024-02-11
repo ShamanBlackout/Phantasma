@@ -19,19 +19,31 @@ async function collectAddresses(
   //return a collection of addresses --in what format
   let results = RPC.getAddressTransactions(account, page, pageSize);
 
+  let addressCollection = {};
   results.then((value) => {
-    //A dictionary of dictionaries
-    //If I show token send / receive then I would have to decode the data in the event. How would I do that
-
     /************************************************************************************
      * Store the last transaction hash
      * This is assuming that the transactions are all ordered
      * If im using graph theory then I would need to filter and organize the data
      *
-     ********************************************8***************************************/
-    let addressCollection = {};
-    for (let x of value["result"]["txs"]) {
-      console.log(x);
+     ***********************************************************************************/
+
+    let address = value["result"]["address]"];
+    //Initialize address object if not already in Collection
+    if (!addressCollection.hasOwnProperty(address)) {
+      addressCollection[address] = {};
+    }
+
+    for (let transactions of value["result"]["txs"]) {
+      for (let eventData of transactions["events"]) {
+        console.log(eventData);
+
+        if (eventData["kind"] == "TokenSend") {
+          let tokenEventData = PhantasmaTS.getTokenEventData(tokenData);
+        } else if (eventData["kind"] == "TokenReceive") {
+          let tokenEventData = PhantasmaTS.getTokenEventData(tokenData);
+        }
+      }
       /******************************
        * Go through the event data and
        * get kind : TokenRecieve
@@ -40,6 +52,7 @@ async function collectAddresses(
        *
        *******************************/
     }
+    //console.log(value["result"]["txs"]);
   });
 }
 
@@ -77,13 +90,13 @@ async function chaseAddress(account: string, level: number, chain: string) {
 }
 
 //Questions: How to do page and Pagesize factor in
-/*
+//P2KAcEJk2UPvTP5rStzeeSJCboE9yEdA2meNVT7UNiKbdH3;
+//P2KLvu4UWXFz4r86PsCrtPdJSgkqCSWTZHjDgqdXXJ6Se1v
 let results = collectAddresses(
-  "P2KAcEJk2UPvTP5rStzeeSJCboE9yEdA2meNVT7UNiKbdH3",
+  "P2KLvu4UWXFz4r86PsCrtPdJSgkqCSWTZHjDgqdXXJ6Se1v",
   1,
   25
 );
-*/
 
 /****************************************************************************************
  * hash: string; //Hash of the transaction
@@ -107,9 +120,9 @@ let results = collectAddresses(
  *
  ******************************************************************************************/
 
-//console.log(results);
+console.log(results);
 let tokenData = "04534F554C0600AC23FC0600046D61696E";
 let script =
   "0D000302340803000D000303A0860103000D000223220000000000000000000000000000000000000000000000000000000000000000000003000D000223220100657B86EBF14E6D5CF89A10A92B03C78BA47F6677A123FB7E5F0C3BE035F9E88203000D000408416C6C6F7747617303000D0004036761732D00012E010D00030500AC23FC0603000D000404534F554C03000D000223220100FED8AB8FB1BE9479A267F2FDE035685C3C01842EDBA8FBF8CE8552ED195ABBC103000D000223220100657B86EBF14E6D5CF89A10A92B03C78BA47F6677A123FB7E5F0C3BE035F9E88203000D00041652756E74696D652E5472616E73666572546F6B656E7307000D000223220100657B86EBF14E6D5CF89A10A92B03C78BA47F6677A123FB7E5F0C3BE035F9E88203000D0004085370656E6447617303000D0004036761732D00012E010B";
 let tokenEventData = PhantasmaTS.getTokenEventData(tokenData);
-console.log(tokenEventData);
+//console.log(tokenEventData);
