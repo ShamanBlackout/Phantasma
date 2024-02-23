@@ -143,5 +143,5 @@ let test: IAddressVertex = {
     },
   },
 };
-
+//@ts-ignore
 console.log(test["e9rtg2hj"]["connections"]["2872y32"]["sent"]);
