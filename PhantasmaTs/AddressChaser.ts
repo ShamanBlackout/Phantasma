@@ -20,7 +20,6 @@ async function collectAddresses(
   //return a collection of addresses --in what format
   let results = RPC.getAddressTransactions(account, page, pageSize);
 
-  let addressCollection = {};
   results.then((value) => {
     /************************************************************************************
      * Store the last transaction hash
@@ -30,6 +29,9 @@ async function collectAddresses(
      ***********************************************************************************/
 
     let address = value["result"]["address"];
+    let addressCollection: IAddressVertex = {
+      address: {},
+    };
     //Initialize address object if not already in Collection
     if (!addressCollection.hasOwnProperty(address)) {
       addressCollection[address] = {};
@@ -38,24 +40,24 @@ async function collectAddresses(
     //get symbol decimals
     for (let transactions of value["result"]["txs"]) {
       for (let eventData of transactions["events"]) {
-        console.log(eventData);
-
-        if (eventData["kind"] == "TokenSend") {
-          let tokenEventData = PhantasmaTS.getTokenEventData(eventData["data"]);
-        } else if (eventData["kind"] == "TokenReceive") {
-          let tokenEventData = PhantasmaTS.getTokenEventData(eventData["data"]);
+        switch (eventData["kind"]) {
+          case "TokenSend":
+            break;
+          case "TokenReceive":
+            break;
         }
       }
-      /******************************
-       * Go through the event data and
-       * get kind : TokenRecieve
-       *     kind: TokenSend
-       *  decrypt data of both
-       *
-       *******************************/
     }
-    //console.log(value["result"]["txs"]);
+
+    /******************************
+     * Go through the event data and
+     * get kind : TokenRecieve
+     *     kind: TokenSend
+     *  decrypt data of both
+     *
+     *******************************/
   });
+  //console.log(value["result"]["txs"]);
 }
 
 //Filter collection based user input
@@ -134,14 +136,13 @@ let tokenEventData = PhantasmaTS.getTokenEventData(tokenData);
 **/
 //console.log(tokenEventData);
 let test: IAddressVertex = {
-  e9rtg2hj: {
-    connections: {
-      "2872y32": {
-        sent: 3455,
-        received: 3455,
-      },
-    },
-  },
+  e9rtg2hj: {},
 };
+
+test["new_addy"] = {};
 //@ts-ignore
-console.log(test["e9rtg2hj"]["connections"]["2872y32"]["sent"]);
+//console.log(test["e9rtg2hj"]["connections"]["2872y32"]["sent"]);
+
+test["e9rtg2hj"]["connections"];
+//function to add a new connection.
+console.log(test["e9rtg2hj"]["connections"]);
