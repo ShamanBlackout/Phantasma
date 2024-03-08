@@ -3,10 +3,10 @@ import { ITxs } from "./ITxs";
 export interface IAddressVertex {
   [address: string]: {
     txs?: [ITxs];
-    connections?: {
+    connections: {
       [conn_address: string]: {
-        sent?: number;
-        received?: number;
+        sent: number;
+        received: number;
       };
     };
   };

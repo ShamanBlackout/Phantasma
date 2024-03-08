@@ -4,6 +4,7 @@
  ********************************/
 import { PBinaryReader, PhantasmaTS } from "phantasma-ts";
 import { IAddressVertex } from "./interfaces/IAddressVertex";
+import { ITxs } from "./interfaces/ITxs";
 
 const host = "http://localhost:7077/rpc";
 const nexus = "simnet";
@@ -28,36 +29,97 @@ async function collectAddresses(
      *
      ***********************************************************************************/
 
+    //initialize collection address
+    //will use tables in the future but for now this should do the job
+    let transactions: ITxs;
+
     let address = value["result"]["address"];
     let addressCollection: IAddressVertex = {
-      address: {},
+      address: {
+        //txs: [transactions],
+        connections: {},
+      },
     };
     //Initialize address object if not already in Collection
     if (!addressCollection.hasOwnProperty(address)) {
-      addressCollection[address] = {};
+      addressCollection[address] = {
+        connections: {},
+      };
     }
 
-    //get symbol decimals
     for (let transactions of value["result"]["txs"]) {
+      let sender = transactions["sender"];
+      console.log(transactions);
       for (let eventData of transactions["events"]) {
+        let eventAddress = eventData["address"];
         switch (eventData["kind"]) {
           case "TokenSend":
+            if (!(eventAddress in addressCollection)) {
+              addressCollection = initializeVertex(
+                address,
+                eventAddress,
+                addressCollection
+              );
+            }
+
+            updateVertice(
+              address,
+              eventAddress,
+              eventData["data"],
+              addressCollection
+            );
+
             break;
           case "TokenReceive":
+            if (!(eventAddress in addressCollection)) {
+              addressCollection = initializeVertex(
+                address,
+                eventAddress,
+                addressCollection
+              );
+            }
             break;
         }
       }
     }
-
-    /******************************
-     * Go through the event data and
-     * get kind : TokenRecieve
-     *     kind: TokenSend
-     *  decrypt data of both
-     *
-     *******************************/
   });
-  //console.log(value["result"]["txs"]);
+}
+
+function updateVertice(
+  from: string,
+  to: string,
+  eventData: string,
+  addressVertex: IAddressVertex
+) {
+  let tokenEventData = PhantasmaTS.getTokenEventData(eventData);
+  // update both addresses
+  if (from != to) {
+    addressVertex[from].connections;
+  }
+}
+
+function initializeVertex(
+  address: string,
+  eventAddress: string,
+  addressVertex: IAddressVertex
+) {
+  addressVertex[eventAddress] = {
+    connections: {
+      [address]: {
+        sent: 0,
+        received: 0,
+      },
+    },
+  };
+  //Technically this doesn't need to be in an if statement but adding for future proofing
+  if (!(eventAddress in addressVertex[address])) {
+    addressVertex[address].connections[eventAddress] = {
+      sent: 0,
+      received: 0,
+    };
+  }
+
+  return addressVertex;
 }
 
 //Filter collection based user input
@@ -96,14 +158,14 @@ async function chaseAddress(account: string, level: number, chain: string) {
 //Questions: How to do page and Pagesize factor in
 //P2KAcEJk2UPvTP5rStzeeSJCboE9yEdA2meNVT7UNiKbdH3;
 //P2KLvu4UWXFz4r86PsCrtPdJSgkqCSWTZHjDgqdXXJ6Se1v
-/** 
+
+/*
 let results = collectAddresses(
-  "P2KLvu4UWXFz4r86PsCrtPdJSgkqCSWTZHjDgqdXXJ6Se1v",
+  "P2K9zmyFDNGN6n6hHiTUAz6jqn29s5G1SWLiXwCVQcpHcQb",
   1,
   25
 );
-
-**/
+*/
 
 /****************************************************************************************
  * hash: string; //Hash of the transaction
@@ -135,14 +197,23 @@ let tokenEventData = PhantasmaTS.getTokenEventData(tokenData);
 
 **/
 //console.log(tokenEventData);
-let test: IAddressVertex = {
-  e9rtg2hj: {},
+
+let addressCollection: IAddressVertex = {
+  test: {
+    connections: {
+      ["add2"]: {
+        sent: 56,
+        received: 76,
+      },
+    },
+  },
 };
 
-test["new_addy"] = {};
-//@ts-ignore
-//console.log(test["e9rtg2hj"]["connections"]["2872y32"]["sent"]);
+if (!("addy2" in addressCollection["test"].connections)) {
+  addressCollection["test"].connections["addy2"] = {
+    sent: 0,
+    received: 0,
+  };
+}
 
-test["e9rtg2hj"]["connections"];
-//function to add a new connection.
-console.log(test["e9rtg2hj"]["connections"]);
+console.log(addressCollection);
