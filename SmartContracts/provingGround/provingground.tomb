@@ -39,6 +39,13 @@ contract provingground{
         local price: number = Oracle.price(symbol);
         return price;
     }
+    public convToString(addy:address):string{
+        local addr_string:string = addy;
+        local retStr:string = "Address: " + addr_string;// + " is of type" + $TYPE_OF(addr_string);
+        return retStr;
+
+
+    }
 
     public sendMsg(from:address, target:address, archiveHash:hash){
         local tx_hash = "DBEBEA827CBA60657F141FD6F94B929D85A95EFC9340ADCFFE0FD73A3CF2845C";
@@ -90,7 +97,6 @@ contract provingground{
     }
     
     public convStrToBtyes(str:string):bytes{
-        conv
         return String.toBytes(str);
     }
 
