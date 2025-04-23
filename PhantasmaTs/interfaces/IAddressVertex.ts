@@ -2,7 +2,7 @@ import { ITxs } from "./ITxs";
 
 export interface IAddressVertex {
   [address: string]: {
-    txs?: [ITxs];
+    txs: string[];
     connections: {
       [conn_address: string]: {
         sent: number;

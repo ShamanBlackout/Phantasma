@@ -36,18 +36,15 @@ async function collectAddresses(
     let address = value["result"]["address"];
     let addressCollection: IAddressVertex = {
       address: {
-        //txs: [transactions],
+        txs: [],
         connections: {},
       },
     };
-    //Initialize address object if not already in Collection
-    if (!addressCollection.hasOwnProperty(address)) {
-      addressCollection[address] = {
-        connections: {},
-      };
-    }
 
     for (let transactions of value["result"]["txs"]) {
+      if (transactions["hash"] in addressCollection[address].txs) {
+        continue;
+      }
       let sender = transactions["sender"];
       console.log(transactions);
       for (let eventData of transactions["events"]) {
@@ -66,6 +63,7 @@ async function collectAddresses(
               address,
               eventAddress,
               eventData["data"],
+              "TokenSend",
               addressCollection
             );
 
@@ -78,6 +76,14 @@ async function collectAddresses(
                 addressCollection
               );
             }
+
+            updateVertice(
+              address,
+              eventAddress,
+              eventData["data"],
+              "TokenReceive",
+              addressCollection
+            );
             break;
         }
       }
@@ -86,15 +92,28 @@ async function collectAddresses(
 }
 
 function updateVertice(
-  from: string,
-  to: string,
+  walletAddress: string,
+  eventAddress: string,
   eventData: string,
+  eventType: string,
   addressVertex: IAddressVertex
 ) {
   let tokenEventData = PhantasmaTS.getTokenEventData(eventData);
+  let symbol = tokenEventData.symbol;
+  let amount = Number(tokenEventData.value);
   // update both addresses
-  if (from != to) {
-    addressVertex[from].connections;
+  //If i have a send why do I need a receive in terms of updating vertices
+  switch (eventType) {
+    case "TokenSend":
+      if (walletAddress != eventAddress) {
+        addressVertex[eventAddress].connections[walletAddress]["sent"] +=
+          amount;
+      }
+      //wallet address == eventAddress, do nothing
+      break;
+
+    case "TokenReceive":
+      if (walletAddress == eventAddress) break;
   }
 }
 
@@ -104,6 +123,7 @@ function initializeVertex(
   addressVertex: IAddressVertex
 ) {
   addressVertex[eventAddress] = {
+    txs: [],
     connections: {
       [address]: {
         sent: 0,
@@ -200,6 +220,7 @@ let tokenEventData = PhantasmaTS.getTokenEventData(tokenData);
 
 let addressCollection: IAddressVertex = {
   test: {
+    txs: [],
     connections: {
       ["add2"]: {
         sent: 56,
@@ -209,6 +230,10 @@ let addressCollection: IAddressVertex = {
   },
 };
 
+addressCollection["test"].txs.push("3142142453421");
+
+let txArr = ["324324324", "34243243", "refg243", "32ewfdsfg", "34rsefs3"];
+
 if (!("addy2" in addressCollection["test"].connections)) {
   addressCollection["test"].connections["addy2"] = {
     sent: 0,
@@ -216,4 +241,14 @@ if (!("addy2" in addressCollection["test"].connections)) {
   };
 }
 
-console.log(addressCollection);
+for (let addr in addressCollection) {
+  console.log(addr);
+  if (addressCollection["test"].txs.includes("314214243421")) continue;
+  console.log("no continue");
+
+  for (let trxs of txArr) {
+    addressCollection[addr].txs.push(trxs);
+  }
+}
+
+console.log(addressCollection["test"].txs);
