@@ -20,9 +20,9 @@ A Unity MonoBehaviour client for connecting to the Phantasma blockchain via Polt
 
 3. Ensure the following dependencies are installed:
 - [Cysharp UniTask](https://github.com/Cysharp/UniTask)
-- [PhantasmaPhoenix.Unity.Core & PhantasmaPhoenix.Unity.LinkClient] (https://github.com/phantasma-io/Phantasma-UnitySDK)
-- [Core Unity giturl] (https://github.com/phantasma-io/Phantasma-UnitySDK.git?path=PhantasmaPhoenix.Unity.Core)
-- [LinkClient Unity giturl] (https://github.com/phantasma-io/Phantasma-UnitySDK.git?path=PhantasmaPhoenix.Unity.LinkClient)
+- [PhantasmaUnity SDK](https://github.com/phantasma-io/Phantasma-UnitySDK)
+- [Core Unity giturl](https://github.com/phantasma-io/Phantasma-UnitySDK.git?path=PhantasmaPhoenix.Unity.Core)
+- [LinkClient Unity giturl](https://github.com/phantasma-io/Phantasma-UnitySDK.git?path=PhantasmaPhoenix.Unity.LinkClient)
 
 ## 🛠️ Configuration
 
