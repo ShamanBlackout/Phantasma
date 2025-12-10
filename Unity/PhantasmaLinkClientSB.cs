@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections;
 using System.Numerics;
 using NativeWebSocket;
 using UnityEngine;
@@ -11,7 +10,7 @@ using System.Linq;
 using PhantasmaPhoenix.Cryptography;
 using PhantasmaPhoenix.Core;
 using Cysharp.Threading.Tasks;
-using System.Threading.Tasks;
+
 
 /***
     * Phantasma Link Client for Unity
@@ -24,7 +23,8 @@ public class PhantasmaLinkClientSB : MonoBehaviour
 {
     [Header("Debug Settings")]
     [Tooltip("Enable/disable debug logging")]
-    public bool EnableDebugLogs = false;
+
+    public bool EnableDebugLogs = true;
 
     private void Log(string message)
     {
@@ -116,7 +116,10 @@ public class PhantasmaLinkClientSB : MonoBehaviour
 
     public bool Ready { get; private set; }
 
+
+    public bool useExternal { get; private set; }
     public bool Enabled { get; private set; }
+    public bool isConnecting { get; private set; } = false;
 
     public bool Busy { get; private set; }
 
@@ -192,8 +195,12 @@ public class PhantasmaLinkClientSB : MonoBehaviour
     /// </summary>
     private async void Start()
     {
-        //this.Enable();
-        await PingWallet();
+        //Check if we are using Poltergeist Wallet
+        useExternal = PlayerPrefs.GetInt(PlayerPrefKeys.usePoltergeist, 0) == 1;
+
+        //Only ping wallet if we are using Poltergeist
+        if (useExternal)
+            await PingWallet();
     }
 
 
@@ -402,22 +409,24 @@ public class PhantasmaLinkClientSB : MonoBehaviour
         {
             this.Ready = true;
             Log("Connection open!");
-            Enqueue(() =>
-            {
-                OnConnectionStateChange?.Invoke(WalletConnectionState.Connected);
-            });
-            // Debug.Log("Connection open!");
+            if (!isConnecting)
+                Enqueue(() =>
+                {
+                    OnConnectionStateChange?.Invoke(WalletConnectionState.Connected);
+                });
 
         };
 
         websocket.OnError += (e) =>
         {
-            LogError("Error! " + e);
-            Enqueue(() =>
+            if (!isConnecting)
             {
-                OnConnectionStateChange?.Invoke(WalletConnectionState.Error);
-            });
-
+                LogError("Error! " + e);
+                Enqueue(() =>
+                {
+                    OnConnectionStateChange?.Invoke(WalletConnectionState.Error);
+                });
+            }
         };
 
 
@@ -425,7 +434,8 @@ public class PhantasmaLinkClientSB : MonoBehaviour
         {
 
             Log("Connection closed!");
-            Enqueue(() =>
+            if (!isConnecting)
+                Enqueue(() =>
             {
                 OnConnectionStateChange?.Invoke(WalletConnectionState.Disconnected);
             });
@@ -478,7 +488,9 @@ public class PhantasmaLinkClientSB : MonoBehaviour
         if (_balanceMap.ContainsKey(symbol))
         {
             var temp = _balanceMap[symbol];
-            return UnitConversion.ToDecimal(temp.value, temp.decimals);
+            // UnitConversion.ToDecimal expects a string representation for the value,
+            // so convert the BigInteger to string first.
+            return UnitConversion.ToDecimal(temp.value.ToString(), (uint)temp.decimals);
         }
 
         return 0;
@@ -727,9 +739,10 @@ public class PhantasmaLinkClientSB : MonoBehaviour
         {
             this.Ready = false;
             OnLogin.Invoke(false, "Wallet disconnected");
-            Debug.Log("Wallet Closed unexpectedly, attempting to reconnect...");
+            Log("Wallet Closed unexpectedly, attempting to reconnect...");
             await ReconnectWithTimeout((result) =>
             {
+                Log("Portergeist Wallet Reconnection Result: " + result);
                 if (!result)
                     this.PingConnection = false;
             });
@@ -748,7 +761,7 @@ public class PhantasmaLinkClientSB : MonoBehaviour
     /// <returns>True if reconnected successfully, false otherwise.</returns>
     private async UniTask ReconnectWithTimeout(Action<bool> callback = null, int? timeout = null, int? retries = null)
     {
-        int attempt = 0;
+
         int maxRetries = retries ?? reconnectRetries;
         int delay = timeout ?? reconnectTimeout;
 
@@ -760,31 +773,35 @@ public class PhantasmaLinkClientSB : MonoBehaviour
         UniTaskCompletionSource<bool> tcs = new UniTaskCompletionSource<bool>();
         reconnectOpenHandler = () =>
         {
-            Log("Reconnection ISSSS successful!");
+            Log("Reconnection IS successful!");
             websocket.OnOpen -= reconnectOpenHandler;
             websocket.OnClose -= reconnectCloseHandler;
+            isConnecting = false;
             tcs.TrySetResult(true);
         };
         reconnectCloseHandler = (e) =>
         {
-            Log("Reconnection HASSSS failed!");
+            Log("Reconnection HAS failed!");
             websocket.OnOpen -= reconnectOpenHandler;
             websocket.OnClose -= reconnectCloseHandler;
+            isConnecting = false;
             tcs.TrySetResult(false);
         };
 
 
+        int attempt = 0;
 
-        bool isConnected = false;
-        while (attempt < maxRetries && !isConnected)
+        bool connecting = true;
+        while (attempt < maxRetries && connecting)
         {
             //Cancel any existing connection and start reconnection process
             websocket.CancelConnection();
-            websocket.OnOpen += reconnectOpenHandler;
+            websocket.OnOpen += reconnectOpenHandler; // subscribe to events
             websocket.OnClose += reconnectCloseHandler;
+            isConnecting = true;
 
+            this.Log($"Reconnection attempt {attempt} of {maxRetries}...");
             attempt++;
-            Log($"Reconnection attempt {attempt} of {maxRetries}...");
 
             try
             {
@@ -812,12 +829,13 @@ public class PhantasmaLinkClientSB : MonoBehaviour
                 if (connectionResult && websocket.State == WebSocketState.Open)
                 {
                     Log("Reconnected successfully!");
-                    isConnected = true;
+                    isConnecting = false;
+                    connecting = false;
                     Enqueue(() =>
                     {
                         OnConnectionStateChange?.Invoke(WalletConnectionState.Connected);
                     });
-                    callback?.Invoke(true);
+                    callback?.Invoke(true);// not sure if this breaks out of the for loop
                 }
             }
             catch (Exception ex)
