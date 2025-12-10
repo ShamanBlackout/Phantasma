@@ -21,61 +21,21 @@ using Cysharp.Threading.Tasks;
 
 public class PhantasmaLinkClientSB : MonoBehaviour
 {
+    #region Configuration
+
+
+
+
+
+
+
+
+
+
+    #region Inspector Settings
     [Header("Debug Settings")]
     [Tooltip("Enable/disable debug logging")]
-
     public bool EnableDebugLogs = true;
-
-    private void Log(string message)
-    {
-        if (EnableDebugLogs)
-        {
-            Debug.Log(message);
-        }
-    }
-
-    private void LogWarning(string message)
-    {
-        if (EnableDebugLogs)
-        {
-            Debug.LogWarning(message);
-        }
-    }
-
-    private void LogError(string message)
-    {
-        if (EnableDebugLogs)
-        {
-            Debug.LogError(message);
-        }
-    }
-
-
-
-    public struct Balance
-    {
-        public readonly string symbol;
-        public readonly BigInteger value;
-        public readonly int decimals;
-        public readonly string[] ids;
-
-        public Balance(string symbol, BigInteger value, int decimals, string[] ids)
-        {
-            this.symbol = symbol;
-            this.value = value;
-            this.decimals = decimals;
-            this.ids = ids;
-        }
-    }
-    public enum WalletConnectionState
-    {
-        Disconnected,
-        Connecting,
-        Connected,
-        LoggedIn,
-        Error
-    }
-    public static PhantasmaLinkClientSB Instance { get; private set; }
 
     [Header("Connection Version")]
     [Tooltip("Strongly recommend to use the version 2")]
@@ -108,21 +68,112 @@ public class PhantasmaLinkClientSB : MonoBehaviour
     [SerializeField] private int reconnectTimeout = 5000;
     [Tooltip("Number of reconnection attempts before giving up")]
     [SerializeField] private int reconnectRetries = 10;
+    #endregion
+    #endregion
 
+
+    #region Utilities
+    #region Logging
+    private void Log(string message)
+    {
+        if (EnableDebugLogs)
+        {
+            Debug.Log(message);
+        }
+    }
+
+    private void LogWarning(string message)
+    {
+        if (EnableDebugLogs)
+        {
+            Debug.LogWarning(message);
+        }
+    }
+
+    private void LogError(string message)
+    {
+        if (EnableDebugLogs)
+        {
+            Debug.LogError(message);
+        }
+    }
+    #endregion
+    #endregion
+
+
+    #region Data Structures
+
+
+
+
+
+
+
+    #region Structs
+    public struct Balance
+    {
+        public readonly string symbol;
+        public readonly BigInteger value;
+        public readonly int decimals;
+        public readonly string[] ids;
+
+        public Balance(string symbol, BigInteger value, int decimals, string[] ids)
+        {
+            this.symbol = symbol;
+            this.value = value;
+            this.decimals = decimals;
+            this.ids = ids;
+        }
+    }
+    #endregion
+
+    #region Enums
+    public enum WalletConnectionState
+    {
+        Disconnected,
+        Connecting,
+        Connected,
+        LoggedIn,
+        Error
+    }
+
+    public enum PlatformKind
+    {
+        None = 0x0,
+        Phantasma = 0x1,
+        Neo = 0x2,
+        Ethereum = 0x4,
+        BSC = 0x8,
+    }
+    #endregion
+    #endregion
+    #region Properties and Fields
+
+
+
+
+
+
+
+    #region Singleton
+    public static PhantasmaLinkClientSB Instance { get; private set; }
+    #endregion
+
+
+
+
+    #region Connection State
     private WebSocket websocket;
-
     public bool PingConnection { get; private set; } = true;
-
-
     public bool Ready { get; private set; }
-
-
     public bool useExternal { get; private set; }
     public bool Enabled { get; private set; }
     public bool isConnecting { get; private set; } = false;
-
     public bool Busy { get; private set; }
+    public WalletConnectionState ConnectionState { get; set; }
+    #endregion
 
+    #region Wallet Information
     public string Nexus
     {
         get { return _nexus; }
@@ -133,16 +184,20 @@ public class PhantasmaLinkClientSB : MonoBehaviour
     public string Name { get; private set; }
     public string Address { get; private set; }
     public bool IsLogged { get; private set; }
-    public WalletConnectionState ConnectionState { get; set; }
-
     public Texture2D Avatar { get; private set; }
+    #endregion
 
+    #region Balance Management
     public IEnumerable<string> Assets => _balanceMap.Keys;
-
-    private Dictionary<int, Action<JObject>> _requestCallbacks = new Dictionary<int, Action<JObject>>();
-
     private Dictionary<string, Balance> _balanceMap = new Dictionary<string, Balance>();
     private Dictionary<string, Balance> _ownershipMap = new Dictionary<string, Balance>();
+    #endregion
+
+    #region Request Management
+    private Dictionary<int, Action<JObject>> _requestCallbacks = new Dictionary<int, Action<JObject>>();
+    private int requestID;
+    #endregion
+    #endregion
 
 
     #region Events
@@ -152,14 +207,17 @@ public class PhantasmaLinkClientSB : MonoBehaviour
     public static UnityEvent<WalletConnectionState> OnConnectionStateChange = new UnityEvent<WalletConnectionState>();
     private static readonly Queue<Action> _executionQueue = new Queue<Action>();
     #endregion
-
+    #region Unity Lifecycle
+    #region Utilities Helper
     static T GetValueOrDefault<T>(JObject obj, string field, T fallback = default)
     {
         return obj.TryGetValue(field, out var token) && token.Type != JTokenType.Null
             ? token.Value<T>()
             : fallback;
     }
+    #endregion
 
+    #region Initialization
     /// <summary>
     /// On Awake make it Singleton
     /// </summary>
@@ -175,24 +233,8 @@ public class PhantasmaLinkClientSB : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
 
         SetMessage("Wallet Info Loading...");
-
-    }
-    void OnEnable()
-    {
-        OnLogin.AddListener(UpdateIsLogged);
-        OnConnectionStateChange.AddListener(ChangeConnectionState);
     }
 
-    void OnDisable()
-    {
-        OnConnectionStateChange.RemoveListener(ChangeConnectionState);
-        OnLogin.RemoveListener(UpdateIsLogged);
-    }
-
-
-    /// <summary>
-    /// Run on Start
-    /// </summary>
     private async void Start()
     {
         //Check if we are using Poltergeist Wallet
@@ -202,11 +244,9 @@ public class PhantasmaLinkClientSB : MonoBehaviour
         if (useExternal)
             await PingWallet();
     }
+    #endregion
 
-
-    /// <summary>
-    /// Update method
-    /// </summary>
+    #region Updates and Events
     void Update()
     {
         if (!Enabled)
@@ -226,15 +266,50 @@ public class PhantasmaLinkClientSB : MonoBehaviour
         }
     }
 
+    void OnEnable()
+    {
+        OnLogin.AddListener(UpdateIsLogged);
+        OnConnectionStateChange.AddListener(ChangeConnectionState);
+    }
+
+    void OnDisable()
+    {
+        OnConnectionStateChange.RemoveListener(ChangeConnectionState);
+        OnLogin.RemoveListener(UpdateIsLogged);
+    }
+
+    private async void OnApplicationQuit()
+    {
+        ClearAll();
+        Log("Closing WebSocket connection on application quit.");
+#if UNITY_WEBGL && !UNITY_EDITOR
+        await websocket.Close().AsUniTask();
+#else
+        await UniTask.Create(async () => await websocket.Close());
+#endif
+        websocket = null;
+    }
+    #endregion
+    #endregion
+
+    #region Event System
 
 
 
-    #region Listeners
+
+
+
+    #region Event Handlers
+    /// <summary>
+    /// Change the connection state and invoke the event. Used for External Wallet Connection State Change
+    /// Mainly provide visual cues to the user
+    /// </summary>
     void ChangeConnectionState(WalletConnectionState state)
     {
         this.ConnectionState = state;
         Log($"Connection State changed to: {state}");
     }
+
     void UpdateIsLogged(bool success, string msg)
     {
         if (success)
@@ -247,6 +322,17 @@ public class PhantasmaLinkClientSB : MonoBehaviour
             this.IsLogged = false;
         }
     }
+
+    void useExternalWallet(bool state)
+    {
+        this.useExternal = state;
+    }
+    #endregion
+
+    #region Threading Utilities
+    /// <summary>
+    /// Enqueue actions to be executed on the main thread.
+    /// </summary>
     public static void Enqueue(Action action)
     {
         lock (_executionQueue)
@@ -254,16 +340,29 @@ public class PhantasmaLinkClientSB : MonoBehaviour
             _executionQueue.Enqueue(action);
         }
     }
-
     #endregion
 
+    #region Message Management
     /// <summary>
     /// Set the Message to the OnInfo
     /// </summary>
     /// <param name="txt"></param>
     private void SetMessage(string txt) => OnInfo?.Invoke(txt);
+    #endregion
+    #endregion
 
-    #region Requests Functions
+    #region Network Communication
+
+
+
+
+
+
+
+
+
+
+    #region Account Management
     /// <summary>
     /// Fetch account info
     /// </summary>
@@ -310,13 +409,12 @@ public class PhantasmaLinkClientSB : MonoBehaviour
             {
                 callback?.Invoke(false, "could not obtain account");
                 OnLogin?.Invoke(false, "could not obtain account");
-
             }
         });
     }
+    #endregion
 
-    private int requestID;
-
+    #region Request Handling
     /// <summary>
     /// Send Link Request
     /// </summary>
@@ -331,7 +429,6 @@ public class PhantasmaLinkClientSB : MonoBehaviour
                 request = request + '/' + this.DappID + '/' + this.Token;
             }
         }
-
 
         Log($"Sending Phantasma Link Request: {request}");
 
@@ -350,6 +447,7 @@ public class PhantasmaLinkClientSB : MonoBehaviour
         await UniTask.Create(async () => await websocket.SendText(request));
 #endif
     }
+    #endregion
 
     /*async UniTask SendWebSocketMessage()
     {
@@ -365,24 +463,19 @@ public class PhantasmaLinkClientSB : MonoBehaviour
 #endif
         }
     }*/
-    #endregion   
+    #endregion
 
-    #region Application Defaults
-    /// <summary>
-    /// On Quiting the Apliction, close the websocket
-    /// </summary>
-    private async void OnApplicationQuit()
-    {
-        ClearAll();
-        Log("Closing WebSocket connection on application quit.");
-#if UNITY_WEBGL && !UNITY_EDITOR
-        await websocket.Close().AsUniTask();
-#else
-        await UniTask.Create(async () => await websocket.Close());
-#endif
-        websocket = null;
-    }
+    #region WebSocket Management
 
+
+
+
+
+
+
+
+
+    #region Connection Setup
     /// <summary>
     /// On Enable the PhantasmaLink, Create the websocket to connect to the Poltergeist Wallet.
     /// </summary>
@@ -476,8 +569,20 @@ public class PhantasmaLinkClientSB : MonoBehaviour
 #endif
     }
     #endregion
+    #endregion
 
-    #region PUBLIC INTERFACE
+    #region Public Interface
+
+
+
+
+
+
+
+
+
+
+    #region Balance and Asset Management
     /// <summary>
     /// Get Balance for specific symbol
     /// </summary>
@@ -511,7 +616,9 @@ public class PhantasmaLinkClientSB : MonoBehaviour
 
         return Array.Empty<string>();
     }
+    #endregion
 
+    #region Authentication and Session Management
     /// <summary>
     /// Login to the Dapp
     /// </summary>
@@ -603,7 +710,9 @@ public class PhantasmaLinkClientSB : MonoBehaviour
         OnConnectionStateChange?.Invoke(WalletConnectionState.Connected); //TODO: Might Change the state of this
         _balanceMap.Clear();
     }
+    #endregion
 
+    #region Transaction and Signing
     /// <summary>
     /// Send Transaction.
     /// </summary>
@@ -693,29 +802,21 @@ public class PhantasmaLinkClientSB : MonoBehaviour
             }
         });
     }
-
-    public enum PlatformKind
-    {
-        None = 0x0,
-        Phantasma = 0x1,
-        Neo = 0x2,
-        Ethereum = 0x4,
-        BSC = 0x8,
-    }
+    #endregion
     #endregion
 
-    #region SHAMAN CUSTOM
+    #region Connection Monitoring
 
 
-    /// <summary>
-    /// IENUMERATOR Send Transaction.
-    /// </summary>
-    /// <param name="chain"></param>
-    /// <param name="script"></param>
-    /// <param name="payload"></param>
-    /// <param name="callback"></param>
 
 
+
+
+
+
+
+
+    #region Ping and Health Check
     async UniTask PingWallet()
     {
         this.Enable();
@@ -725,9 +826,9 @@ public class PhantasmaLinkClientSB : MonoBehaviour
             {
                 try { await CheckConnection(); } catch { }
             });
-
         }
     }
+
     async UniTask CheckConnection()
     {
         //Debug.Log("Checking Connection");
@@ -748,11 +849,11 @@ public class PhantasmaLinkClientSB : MonoBehaviour
             });
 
             return;
-
         }
     }
+    #endregion
 
-
+    #region Reconnection Logic
     /// <summary>  
     /// Reconnects to the WebSocket with retries.
     /// </summary>
@@ -847,6 +948,13 @@ public class PhantasmaLinkClientSB : MonoBehaviour
             await UniTask.Delay(delay);
         }
     }
+    #endregion
+
+    #region Connection Utilities
+    public void setExternal(bool state)
+    {
+        this.useExternal = state;
+    }
 
     public async void resetConnection()
     {
@@ -856,9 +964,6 @@ public class PhantasmaLinkClientSB : MonoBehaviour
             await PingWallet();
         }
     }
-
-
-
-
+    #endregion
+    #endregion
 }
-#endregion
